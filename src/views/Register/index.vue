@@ -1,0 +1,285 @@
+<template>
+  <div>
+    <el-dialog
+        :visible="true"
+        title="注  册"
+        width="410px"
+        :show-close="false"
+        center>
+        <el-form :model="registForm" :rules="rules" ref="registForm" label-width="22%" class="login-form">
+            <el-form-item label="用户名：" prop="userName">
+              <el-popover
+                ref="userNamePopover"
+                placement="right"
+                width="100"
+                trigger="focus"
+                content="8-16位，只允许中英文，数字和_，中文最多8个">
+              </el-popover>
+              <el-input v-popover:userNamePopover v-model="registForm.userName" placeholder="请输入用户名"></el-input>
+            </el-form-item>
+
+            <el-form-item label="密  码：" prop="password">
+              <el-popover
+                ref="pwdPopover"
+                placement="right"
+                width="100"
+                trigger="focus"
+                content="8-16位，只允许数字，英文，部分特殊字符">
+              </el-popover>
+              <el-input v-popover:pwdPopover v-model="registForm.password" placeholder="请输入密码" show-password></el-input>
+            </el-form-item>
+
+            <el-form-item label="手机号：" prop="mobile">
+              <el-input v-model="registForm.mobile" placeholder="请输入手机号">
+                <el-button @click="subSMS" size="small" slot="append" type="primary">{{SMSText}}</el-button>
+              </el-input>
+            </el-form-item>
+
+            <el-form-item v-show="verCodeVisible" label="验证码：" prop="verCode">
+              <el-input v-model="registForm.verCode" placeholder="请输入验证码"></el-input>
+            </el-form-item>
+
+            <slide-verify
+              v-show="verifyVisible"
+              :l="42"
+              :r="10"
+              :w="310"
+              :h="155"
+              ref="slideblock"
+              @success="onSuccess"
+              @fail="onFail"
+              @refresh="onRefresh"
+              :slider-text="text"
+            ></slide-verify>
+
+            <div class="alert-button-wrapper">
+              <el-button class="submit-button" type="primary" @click="regist()">注 册</el-button>
+            </div>
+
+          </el-form>
+
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import { Http } from '@/utils/http'
+import { Utils } from '@/utils/utils'
+import { Time } from '@/utils/time'
+
+export default {
+  data: function(){
+    const userNameCheck = (rule, value, callback) => {
+      setTimeout(async () => {
+        // console.log('checkName', await this.checkUserName())
+        if (await this.checkUserName() == 'yes') {
+          callback(new Error('用户名已存在，请重新输入'));
+        } else {
+          callback()
+        }
+      }, 1000)
+    }
+
+    return {
+      rules: {
+        userName: [
+          { validator: userNameCheck, trigger: 'blur' }
+        ]
+      },
+      flag: true,
+      userNameTip: false,
+      text: '向右滑动至空缺处',
+      msg: '',
+      verifyVisible: false,
+      verCodeVisible: false,
+      SMSText: '获取验证码',
+      registForm: {
+        userName: '',
+        password: '',
+        mobile: '',
+        system_id: '',
+        first_name: '',
+        last_name: '',
+        male: '',
+        gender: '',
+        age: 0,
+        mobile: '',
+        email: '',
+        verCode: ''
+      }
+    }
+  },
+  mounted(){
+    this.userNameTip = true
+  },
+  methods: {
+    regist(){
+      if(!this.registForm.userName){
+        this.$message({
+          message: '请输入用户名',
+          type: 'warning'
+        })
+        return
+      }
+      if(!this.registForm.password){
+        this.$message({
+          message: '请输入密码',
+          type: 'warning'
+        })
+        return
+      }
+      if(!this.registForm.mobile){
+        this.$message({
+          message: '请输入手机号',
+          type: 'warning'
+        })
+        return
+      }
+      if(!this.registForm.verCode){
+        this.$message({
+          message: '请输入验证码',
+          type: 'warning' 
+        })
+        return
+      }
+
+      this.$refs['registForm'].validate(async (valid) => {
+        if (valid) {
+          const params = {
+            'user': JSON.stringify({
+              'system_id': this.registForm.system_id,
+              'username': this.registForm.userName,
+              'password': this.registForm.password,
+              'user_id': '',
+              'first_name': this.registForm.first_name,
+              'last_name': this.registForm.last_name,
+              'gender': this.registForm.gender,
+              'age': this.registForm.age,
+              'mobile': this.registForm.mobile,
+              'email': this.registForm.email
+            }),
+            'authorization': JSON.stringify({
+              'system_id': this.registForm.system_id,
+              'mobile': this.registForm.mobile,
+              'sms_pin': this.registForm.verCode,
+              'transaction': 'Create Account'
+            })
+          }
+
+          const data = await Http.request({
+            url: '/Community/User',
+            data: params,
+            method: 'POST'
+          })
+          if (data.data2.user && data.data) {
+            localStorage.setItem('_userSess', data.data2.user)
+            localStorage.setItem('_user', Utils.jsonToString(data.data))
+            this.resetForm()
+            this.centerDialogVisible = false
+            this.$router.push('/home/recommend')
+          } else {
+            this.$message({
+              message: '登录失败，请检查用户名/密码/验证码',
+              type: 'error'
+            })
+          }
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      })
+    },
+    // 检查用户名
+    async checkUserName(){
+      const params = {
+        user: Utils.jsonToString({username: this.registForm.userName}),
+        authorization: Utils.jsonToString({transaction: 'Check Username'})
+      }
+      const data = await Http.request({
+        url: '/Community/User',
+        data: params,
+        method: 'POST'
+      })
+
+      return data.message
+    },
+    // 点击获取验证码
+    subSMS() {
+      if(!this.registForm.mobile){
+        this.$message({
+          message: '请输入手机号',
+          type: 'warning'
+        })
+        return
+      }
+      if(this.flag){
+        this.flag = false
+        this.verifyVisible = true
+        // 开始倒计时
+        this.countTime()
+      }
+    },
+    // 倒计时
+    countTime(){
+      new Time(65, this)
+    },
+    // 验证码成功回调
+    onSuccess(){
+      this.$refs.slideblock.reset()
+      this.verCodeVisible = true
+      this.verifyVisible = false
+      this.sendSms()
+    },
+    async sendSms(){
+      const params = {
+        'authorization': JSON.stringify({
+          'system_id': '',
+          'mobile': this.registForm.mobile,
+          'sms_pin': '',
+          'transaction': 'Create Account'
+        })
+      }
+      const url = '/Community/Authorization'
+      const data = await Http.request({
+        url,
+        data: params,
+        method: 'POST'
+      })
+      this.registForm.system_id = data.data.system_id
+      this.$message({
+        message: '验证码已经发送，请注意查看手机短信',
+        type: 'success'
+      })
+    },
+    onFail(){
+      this.msg = ''
+      this.verCodeVisible = false
+    },
+    onRefresh(){
+      this.msg = ''
+      this.verCodeVisible = false
+    },
+    // 重置表单
+    resetForm(){
+      this.$refs.slideblock.reset()
+      this.verifyVisible = false
+      this.verCodeVisible = false
+      this.$refs['registForm'].resetFields()
+    }
+  }
+}
+</script>
+
+<style lang="css" scoped>
+.slide-verify {
+  left: 24px;
+}
+.slide-verify-slider {
+  margin-bottom: 10px;
+}
+.alert-button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+</style>
