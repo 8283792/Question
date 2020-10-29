@@ -8,17 +8,22 @@
           <div class="edit-box">
             <span class="edit-left">头像</span>
             <span class="edit-right">
-              <img src="https://sf1-ttcdn-tos.pstatp.com/img/mosaic-legacy/3791/5035712059~120x256.image" alt="">
+              <img class="avator" @click="handlePictureCardPreview" :src="user.user_avatar && user.user_avatar.avatar" alt="">
               
               <span class="edit-desc">
-                支持 jpg、png、jpeg 格式大小 5M 以内的图片
+                支持 png 格式大小 5M 以内的图片
                 <el-upload
                   action="/Community/User"
                   :show-file-list="false"
                   :http-request="httpUpload"
+                  :before-upload="beforeUpload"
                 >
                   <el-button class="upload" size="small" type="primary">点击上传</el-button>
                 </el-upload>
+
+                <el-dialog :visible.sync="dialogVisible">
+                  <img width="100%" :src="dialogImageUrl" alt="">
+                </el-dialog>
               </span>
             </span>
           </div>
@@ -121,6 +126,8 @@ import { Utils } from '@/utils/utils'
 export default {
   data() {
     return {
+      dialogImageUrl: '',
+      dialogVisible: false,
       activeName: 'my',
       user: {
         username: '',
@@ -181,7 +188,6 @@ export default {
       }
     },
     httpUpload(options){
-      debugger
       let file = options.file
       let filename = file.name
       if (file) {
@@ -190,6 +196,7 @@ export default {
       this.fileReader.onload = async () => {
         let base64Str = this.fileReader.result
         console.log(base64Str)
+        this.dialogImageUrl = base64Str
 
         const session = localStorage.getItem('_userSess')
         const user = JSON.parse(localStorage.getItem('_user'))
@@ -198,7 +205,7 @@ export default {
             'system_id': session
           }),
           'user_avatar': JSON.stringify({
-            'system_id': '',
+            'system_id': user.user_avatar.system_id,
             'user': user.system_id,
             'avatar': base64Str
           }),
@@ -216,7 +223,7 @@ export default {
           method: 'POST'
         })
 
-        debugger
+
         // let config = {
         //   url: '/api/file/upload/base64',
         //   method: 'post',
@@ -241,14 +248,18 @@ export default {
         //   })
       }
     },
+    // 预览大图
+    handlePictureCardPreview(file) {
+      // this.dialogImageUrl = this.target.currentSrc
+      this.dialogVisible = true
+    },
     beforeUpload (file) {
       const isLt5M = file.size < 5 * 1024 * 1024
-      if (this.fileList.length >= 3) {
-        alert('At most 3 files')
-        return false
-      }
       if (!isLt5M) {
-        alert('The max size is 5MB')
+        this.$message({
+          message: 'The max size is 5MB',
+          type: 'error'
+        })
         return false
       }
     },
@@ -297,7 +308,7 @@ export default {
   flex-direction: column;
   justify-content: space-around;
 }
-.edit-right img {
+.avator {
   width: 72px;
   height: 72px;
   margin-right: 40px;
