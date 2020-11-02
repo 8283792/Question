@@ -27,14 +27,14 @@
         <el-button slot="append" icon="el-icon-search"></el-button>
       </el-input>
 
-      <el-button v-show="!user" @click="openLogin" size="small" type="primary">登&nbsp;录</el-button>
+      <el-button v-show="!user.system_id" @click="openLogin" size="small" type="primary">登&nbsp;录</el-button>
 
-      <el-button v-show="user" @click="write" size="small" type="primary">发&nbsp;布</el-button>
+      <el-button v-show="user.system_id" @click="write" size="small" type="primary">发&nbsp;布</el-button>
 
-      <el-dropdown v-show="user" @command="handleCommand">
+      <el-dropdown v-show="user.system_id" @command="handleCommand">
         <span class="el-dropdown-link">
           <a slot="reference">
-            <el-avatar :size="40" :src="user.user_avatar && user.user_avatar.avatar || circleUrl"></el-avatar>
+            <el-avatar :size="40" :src="user.user_avatar && user.user_avatar.avatar_small || circleUrl"></el-avatar>
           </a>
         </span>
         <el-dropdown-menu slot="dropdown">
@@ -81,6 +81,7 @@
 <script>
 import { Http } from '@/utils/http'
 import { Utils } from '@/utils/utils'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   data(){
@@ -88,7 +89,6 @@ export default {
       routeHash: '#/',
       circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
       search: '',
-      user: '',
       centerDialogVisible: false,
       loginForm: {
         userName: '',
@@ -96,11 +96,12 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters([
+      'user'
+    ])
+  },
   mounted(){
-    const user = localStorage.getItem('_user')
-    if(user){
-      this.user = JSON.parse(user)
-    }
   },
   methods: {
     routeTo($ev){
@@ -159,12 +160,12 @@ export default {
         data: params,
         method: 'POST'
       })
-
-      debugger
+      
+      console.log(data)
       
       if (data.data2.user && data.data) {
         localStorage.setItem('_userSess', data.data2.system_id)
-        localStorage.setItem('_user', Utils.jsonToString(data.data))
+        this.saveUserData(data.data)
         location.reload()
         this.centerDialogVisible = false
       } else {
@@ -181,17 +182,21 @@ export default {
     // 头像选择菜单
     handleCommand(command) {
       if(command == 'exit'){
-        localStorage.removeItem('_user')
+        this.clearUserData()
         location.reload()
       } else if(command == 'my') {
-        if (this.$route.fullPath == 'my') return
+        if (this.$route.fullPath == '/my') return
         this.$router.push('/my')
       }
     },
     // 重置表单
     resetForm(){
       this.$refs['ruleForm1'].resetFields()
-    }
+    },
+    ...mapActions([
+      'saveUserData',
+      'clearUserData'
+    ])
   }
 }
 </script>

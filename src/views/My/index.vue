@@ -8,10 +8,10 @@
           <div class="edit-box">
             <span class="edit-left">头像</span>
             <span class="edit-right">
-              <img class="avator" @click="handlePictureCardPreview" :src="user.user_avatar && user.user_avatar.avatar" alt="">
+              <img class="avator" @click="handlePictureCardPreview" :src="user.user_avatar && user.user_avatar.avatar_small" alt="">
               
               <span class="edit-desc">
-                支持 png 格式大小 5M 以内的图片
+                仅支持 jpg、png、jpeg 格式，大小 5M 以内的图片
                 <el-upload
                   action="/Community/User"
                   :show-file-list="false"
@@ -22,7 +22,7 @@
                 </el-upload>
 
                 <el-dialog :visible.sync="dialogVisible">
-                  <img width="100%" :src="dialogImageUrl" alt="">
+                  <img width="100%" :src="user.user_avatar && user.user_avatar.avatar_small" alt="">
                 </el-dialog>
               </span>
             </span>
@@ -122,30 +122,21 @@
 <script>
 import { Http } from '@/utils/http'
 import { Utils } from '@/utils/utils'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   data() {
     return {
-      dialogImageUrl: '',
       dialogVisible: false,
-      activeName: 'my',
-      user: {
-        username: '',
-        password: '',
-        first_name: '',
-        last_name: '',
-        gender: '',
-        age: '',
-        mobile: '',
-        email: ''
-      }
+      activeName: 'my'
     }
   },
+  computed: {
+    ...mapGetters([
+      'user'
+    ])
+  },
   mounted () {
-    const user = localStorage.getItem('_user')
-    if(user){
-      this.user = JSON.parse(user)
-    }
     if (!window.FileReader) {
       console.error('Your browser does not support FileReader API!')
     }
@@ -153,7 +144,7 @@ export default {
   },
   methods: {
     async update(key){
-      if(!key) return
+      if(!key || !this.user.system_id) return
       const session = localStorage.getItem('_userSess')
       const user = JSON.parse(localStorage.getItem('_user'))
       user[key] = this.user[key]
@@ -188,6 +179,7 @@ export default {
       }
     },
     httpUpload(options){
+      if (!this.user.system_id) return
       let file = options.file
       let filename = file.name
       if (file) {
@@ -196,7 +188,6 @@ export default {
       this.fileReader.onload = async () => {
         let base64Str = this.fileReader.result
         console.log(base64Str)
-        this.dialogImageUrl = base64Str
 
         const session = localStorage.getItem('_userSess')
         const user = JSON.parse(localStorage.getItem('_user'))
@@ -205,17 +196,16 @@ export default {
             'system_id': session
           }),
           'user_avatar': JSON.stringify({
-            'system_id': user.user_avatar.system_id,
+            'system_id': user.user_avatar.system_id ? user.user_avatar.system_id : '',
             'user': user.system_id,
             'avatar': base64Str
           }),
           'authorization': JSON.stringify({
-            'system_id': '',
-            'mobile': '',
-            'sms_pin': '',
             'transaction': 'Update User Avatar'
           })
         }
+
+        // return
 
         const data = await Http.request({
           url: options.action,
@@ -223,6 +213,8 @@ export default {
           method: 'POST'
         })
 
+        this.user.user_avatar = data.data
+        localStorage.setItem('_user', JSON.stringify(this.user))
 
         // let config = {
         //   url: '/api/file/upload/base64',
@@ -255,9 +247,17 @@ export default {
     },
     beforeUpload (file) {
       const isLt5M = file.size < 5 * 1024 * 1024
+      // debugger
+      if(file.type != 'image/png' && file.type != 'image/jpeg' && file.type != 'image/jpg' && file.type != 'image/gif'){
+        this.$message({
+          message: '仅支持 jpg、png、jpeg 格式的图片',
+          type: 'error'
+        })
+        return false
+      }
       if (!isLt5M) {
         this.$message({
-          message: 'The max size is 5MB',
+          message: '仅支持 5M 以内的图片',
           type: 'error'
         })
         return false
