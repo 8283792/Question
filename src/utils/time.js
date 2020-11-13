@@ -10,7 +10,7 @@ class Time{
    * @param {标识符} flag 
    * @param {改变域} that 
    */
-  countTime = function(wait, that){
+  countTime(wait, that) {
     if (wait == 0) {
       wait = this.initWait
       that._data.SMSText = '发送'

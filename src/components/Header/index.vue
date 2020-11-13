@@ -63,7 +63,7 @@
             
               <span class="register-link">
                 新用户
-                <a href="#/register" target="_blank">
+                <a href="#/register">
                   点击这里
                 </a>
                 注册
@@ -136,17 +136,9 @@ export default {
       }
 
       const params = {
-        'user': JSON.stringify({
-          'system_id': '',
+        'authentication': JSON.stringify({
           'username': this.loginForm.userName,
-          'password': this.loginForm.password,
-          'user_id': '',
-          'first_name': '',
-          'last_name': '',
-          'gender': '',
-          'age': 18,
-          'mobile': '',
-          'email': ''
+          'password': this.loginForm.password
         }),
         'authorization': JSON.stringify({
           'system_id': '',
@@ -166,7 +158,7 @@ export default {
       if (data.data2.user && data.data) {
         localStorage.setItem('_userSess', data.data2.system_id)
         this.saveUserData(data.data)
-        location.reload()
+        window.location.href = '/'
         this.centerDialogVisible = false
       } else {
         this.$message({
@@ -181,11 +173,12 @@ export default {
     },
     // 头像选择菜单
     handleCommand(command) {
+      const url = this.$route.fullPath
       if(command == 'exit'){
         this.clearUserData()
-        location.reload()
+        window.location.href = '/'
       } else if(command == 'my') {
-        if (this.$route.fullPath == '/my') return
+        if (url == '/my') return
         this.$router.push('/my')
       }
     },

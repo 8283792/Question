@@ -247,8 +247,9 @@ export default {
     },
     beforeUpload (file) {
       const isLt5M = file.size < 5 * 1024 * 1024
+      const type = file.type
       // debugger
-      if(file.type != 'image/png' && file.type != 'image/jpeg' && file.type != 'image/jpg' && file.type != 'image/gif'){
+      if(type != 'image/png' && type != 'image/jpeg' && type != 'image/jpg' && type != 'image/gif'){
         this.$message({
           message: '仅支持 jpg、png、jpeg 格式的图片',
           type: 'error'
