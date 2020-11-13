@@ -11,7 +11,7 @@
               <img class="avator" @click="handlePictureCardPreview" :src="user.user_avatar && user.user_avatar.avatar_small" alt="">
               
               <span class="edit-desc">
-                仅支持 jpg、png、jpeg 格式，大小 5M 以内的图片
+                仅支持jpg和png格式，大小500K以内的图片
                 <el-upload
                   action="/Community/User"
                   :show-file-list="false"
@@ -40,26 +40,6 @@
 
           <el-divider />
 
-          <div class="edit-box">
-            <span class="edit-left">手机</span>
-            <span class="edit-right">
-              <input type="text" class="edit-ipt" v-model="user.mobile" readonly placeholder="请输入手机号">
-              <!-- <el-button type="primary" icon="el-icon-edit" size="small">修改</el-button> -->
-            </span>
-          </div>
-
-          <el-divider />
-
-          <div class="edit-box">
-            <span class="edit-left">Email</span>
-            <span class="edit-right">
-              <input type="text" class="edit-ipt" v-model="user.email" readonly placeholder="">
-              <!-- <el-button type="primary" icon="el-icon-edit" size="small">修改</el-button> -->
-            </span>
-          </div>
-
-          <el-divider />
-
           <!-- <div class="edit-box">
             <span class="edit-left">密码</span>
             <span class="edit-right">
@@ -70,7 +50,7 @@
 
           <el-divider /> -->
 
-          <div class="edit-box">
+          <!-- <div class="edit-box">
             <span class="edit-left">姓</span>
             <span class="edit-right">
               <input type="text" class="edit-ipt" v-model="user.first_name" placeholder="请输入姓">
@@ -86,16 +66,16 @@
               <input type="text" class="edit-ipt" v-model="user.last_name" placeholder="请输入名">
               <el-button type="primary" icon="el-icon-edit" @click="update('last_name')" size="small">修改</el-button>
             </span>
-          </div>
+          </div> -->
 
-          <el-divider />
+          <!-- <el-divider /> -->
 
           <div class="edit-box">
             <span class="edit-left">性别</span>
             <span class="edit-right">
               <el-radio-group class="edit-ipt" v-model="user.gender">
-                <el-radio label="1">男</el-radio>
-                <el-radio label="2">女</el-radio>
+                <el-radio label="male">男</el-radio>
+                <el-radio label=female>女</el-radio>
               </el-radio-group>
               <el-button type="primary" icon="el-icon-edit" @click="update('gender')" size="small">修改</el-button>
             </span>
@@ -113,7 +93,28 @@
 
 
         </el-tab-pane>
-        <!-- <el-tab-pane label="账号设置" name="account">账号设置</el-tab-pane> -->
+        <el-tab-pane label="账号设置" name="account">
+          <b class="title">账号设置</b>
+          <el-divider />
+
+          <div class="edit-box">
+            <span class="edit-left">手机</span>
+            <span class="edit-right">
+              <input type="text" class="edit-ipt" v-model="user.mobile" readonly placeholder="请输入手机号">
+              <!-- <el-button type="primary" icon="el-icon-edit" size="small">修改</el-button> -->
+            </span>
+          </div>
+
+          <el-divider />
+
+          <div class="edit-box">
+            <span class="edit-left">邮箱</span>
+            <span class="edit-right">
+              <input type="text" class="edit-ipt" v-model="user.email" readonly placeholder="">
+              <!-- <el-button type="primary" icon="el-icon-edit" size="small">修改</el-button> -->
+            </span>
+          </div>
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -149,7 +150,7 @@ export default {
       const user = JSON.parse(localStorage.getItem('_user'))
       user[key] = this.user[key]
       const params = {
-        'authentication_session': JSON.stringify({
+        'authentication': JSON.stringify({
           'system_id': session
         }),
         'user': JSON.stringify(user),
@@ -185,18 +186,20 @@ export default {
       if (file) {
         this.fileReader.readAsDataURL(file)
       }
+
       this.fileReader.onload = async () => {
         let base64Str = this.fileReader.result
         console.log(base64Str)
 
         const session = localStorage.getItem('_userSess')
         const user = JSON.parse(localStorage.getItem('_user'))
+        
         const params = {
-          'authentication_session': JSON.stringify({
+          'authentication': JSON.stringify({
             'system_id': session
           }),
           'user_avatar': JSON.stringify({
-            'system_id': user.user_avatar.system_id ? user.user_avatar.system_id : '',
+            'system_id': user.user_avatar ? user.user_avatar.system_id : '',
             'user': user.system_id,
             'avatar': base64Str
           }),
@@ -246,10 +249,10 @@ export default {
       this.dialogVisible = true
     },
     beforeUpload (file) {
-      const isLt5M = file.size < 5 * 1024 * 1024
+      const isLt5M = file.size < 500 * 1024
       const type = file.type
-      // debugger
-      if(type != 'image/png' && type != 'image/jpeg' && type != 'image/jpg' && type != 'image/gif'){
+
+      if(type != 'image/png' && type != 'image/jpeg' && type != 'image/jpg'){
         this.$message({
           message: '仅支持 jpg、png、jpeg 格式的图片',
           type: 'error'
@@ -258,7 +261,7 @@ export default {
       }
       if (!isLt5M) {
         this.$message({
-          message: '仅支持 5M 以内的图片',
+          message: '仅支持 500k 以内的图片',
           type: 'error'
         })
         return false
