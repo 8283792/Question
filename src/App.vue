@@ -8,7 +8,7 @@
 import Home from "@/views/Home";
 
 export default {
-  name: 'app',
+	name: 'app',
   components: {
     Home
   }

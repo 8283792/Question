@@ -1,6 +1,26 @@
 import Vue from 'vue'
 // import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
+// import 'element-ui/lib/theme-chalk/index.css'
+import 'element-ui/lib/theme-chalk/button.css'
+import 'element-ui/lib/theme-chalk/dialog.css'
+import 'element-ui/lib/theme-chalk/radio.css'
+import 'element-ui/lib/theme-chalk/form.css'
+import 'element-ui/lib/theme-chalk/form-item.css'
+import 'element-ui/lib/theme-chalk/dialog.css'
+import 'element-ui/lib/theme-chalk/popover.css'
+import 'element-ui/lib/theme-chalk/input.css'
+import 'element-ui/lib/theme-chalk/dropdown.css'
+import 'element-ui/lib/theme-chalk/dropdown-menu.css'
+import 'element-ui/lib/theme-chalk/dropdown-item.css'
+import 'element-ui/lib/theme-chalk/tabs.css'
+import 'element-ui/lib/theme-chalk/tab-pane.css'
+import 'element-ui/lib/theme-chalk/avatar.css'
+import 'element-ui/lib/theme-chalk/divider.css'
+import 'element-ui/lib/theme-chalk/upload.css'
+import 'element-ui/lib/theme-chalk/radio-group.css'
+import 'element-ui/lib/theme-chalk/message.css'
+import 'element-ui/lib/theme-chalk/date-picker.css'
+
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -22,7 +42,8 @@ import {
   Divider,
   Upload,
   RadioGroup,
-  Message
+  Message,
+  DatePicker
 } from 'element-ui'
 
 // Vue.use(ElementUI)
@@ -43,6 +64,7 @@ Vue.use(Avatar)
 Vue.use(Divider)
 Vue.use(Upload)
 Vue.use(RadioGroup)
+Vue.use(DatePicker)
 
 Vue.prototype.$message = Message
 

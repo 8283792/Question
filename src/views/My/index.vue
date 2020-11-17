@@ -22,7 +22,7 @@
                 </el-upload>
 
                 <el-dialog :visible.sync="dialogVisible">
-                  <img width="100%" :src="user.user_avatar && user.user_avatar.avatar_small" alt="">
+                  <img width="100%" :src="user.user_avatar && user.user_avatar.avatar_url" alt="">
                 </el-dialog>
               </span>
             </span>
@@ -39,6 +39,16 @@
           </div>
 
           <el-divider />
+
+          <!-- <div class="edit-box">
+            <span class="edit-left">年龄</span>
+            <span class="edit-right">
+              <input type="text" class="edit-ipt" v-model="user.age" placeholder="请输入年龄">
+              <el-button type="primary" icon="el-icon-edit" @click="update('dob')" size="small">修改</el-button>
+            </span>
+          </div>
+
+          <el-divider /> -->
 
           <!-- <div class="edit-box">
             <span class="edit-left">密码</span>
@@ -84,17 +94,24 @@
           <el-divider />
 
           <div class="edit-box">
-            <span class="edit-left">年龄</span>
+            <span class="edit-left">生日</span>
             <span class="edit-right">
-              <input type="text" class="edit-ipt" v-model="user.age" placeholder="请输入年龄">
-              <el-button type="primary" icon="el-icon-edit" @click="update('age')" size="small">修改</el-button>
+              <!-- <input type="text" class="edit-ipt" v-model="user.age" placeholder="请输入年龄"> -->
+              <el-date-picker
+                class="edit-ipt date-ipt"
+                v-model="user.dob"
+                size="small"
+                type="date"
+                value-format="yyyy-MM-dd">
+              </el-date-picker>
+              <el-button type="primary" icon="el-icon-edit" @click="update('dob')" size="small">修改</el-button>
             </span>
           </div>
 
 
         </el-tab-pane>
-        <el-tab-pane label="账号设置" name="account">
-          <b class="title">账号设置</b>
+        <el-tab-pane label="账号安全" name="account">
+          <b class="title">账号安全</b>
           <el-divider />
 
           <div class="edit-box">
@@ -149,6 +166,7 @@ export default {
       const session = localStorage.getItem('_userSess')
       const user = JSON.parse(localStorage.getItem('_user'))
       user[key] = this.user[key]
+
       const params = {
         'authentication': JSON.stringify({
           'system_id': session
@@ -323,12 +341,18 @@ export default {
 }
 .edit-ipt {
   height: 28px;
+  line-height: 28px;
   border: 0;
   font-size: 16px;
   color: #9c9c9c;
   width: 400px;
   padding: 0;
   margin-right: 10px;
+  vertical-align: middle;
+}
+.date-ipt>>>input {
+  color: #9c9c9c;
+  border: none;
 }
 .el-divider--horizontal {
   margin: 18px 0;
