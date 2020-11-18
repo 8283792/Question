@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
+
 import Home from '@/views/Home'
-
 import Main from '@/views/Main'
-
 import BoilingPoint from '@/views/BoilingPoint'
 import Recommend from '@/views/Recommend'
 import BackEnd from '@/views/BackEnd'
