@@ -8,7 +8,7 @@
           <div class="edit-box">
             <span class="edit-left">头像</span>
             <span class="edit-right">
-              <img class="avator" @click="handlePictureCardPreview" :src="user.user_avatar && user.user_avatar.avatar_small" alt="">
+              <img class="avator" @click="handlePictureCardPreview" :src="user.user_avatar && user.user_avatar.avatar_small_url" alt="">
               
               <span class="edit-desc">
                 仅支持jpg和png格式，大小500K以内的图片
@@ -185,7 +185,8 @@ export default {
         method: 'POST'
       })
       if(data.data && data.data.system_id){
-        localStorage.setItem('_user', JSON.stringify(data.data))
+        // localStorage.setItem('_user', JSON.stringify(data.data))
+        this.saveUserData(data.data)
         this.$message({
           message: '修改成功',
           type: 'success'
@@ -233,6 +234,16 @@ export default {
           data: params,
           method: 'POST'
         })
+
+        if(data.message_no == 100){
+          this.$message({
+            message: '您长时间未操作，请重新登录',
+            type: 'error'
+          })
+          // this.clearUserData()
+          // this.$router.push('/')
+          return
+        }
 
         this.user.user_avatar = data.data
         localStorage.setItem('_user', JSON.stringify(this.user))
@@ -290,7 +301,11 @@ export default {
       console.log('upload result:', res, file)
       file.key = data.key
       this.fileList.push(data.key)
-    }
+    },
+    ...mapActions([
+      'saveUserData',
+      'clearUserData'
+    ])
   }
 }
 </script>
@@ -299,10 +314,7 @@ export default {
 .container {
   min-height: calc(100vh - 83px);
 }
-.main {
-  padding: 10px 40px;
-  max-width: 600px;
-}
+
 .tab-item {
   font-size: 14px;
 }

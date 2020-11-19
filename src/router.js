@@ -10,6 +10,7 @@ import BackEnd from '@/views/BackEnd'
 import FrontEnd from '@/views/FrontEnd'
 import My from '@/views/My'
 import Register from '@/views/Register'
+import Publish from '@/views/Publish'
 
 
 Vue.use(Router)
@@ -58,6 +59,11 @@ export default new Router({
           path: '/my',
           name: 'my',
           component: My,
+        },
+        {
+          path: '/publish',
+          name: 'publish',
+          component: Publish,
         }
       ]
     },

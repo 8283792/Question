@@ -34,7 +34,7 @@
       <el-dropdown v-show="user.system_id" @command="handleCommand">
         <span class="el-dropdown-link">
           <a slot="reference">
-            <el-avatar :size="40" :src="user.user_avatar && user.user_avatar.avatar_small || circleUrl"></el-avatar>
+            <el-avatar :size="40" :src="user.user_avatar && user.user_avatar.avatar_small_url || circleUrl"></el-avatar>
           </a>
         </span>
         <el-dropdown-menu slot="dropdown">
@@ -169,7 +169,7 @@ export default {
     },
     // 发布
     write(){
-      alert('发布')
+      this.$router.push('/publish')
     },
     // 头像选择菜单
     handleCommand(command) {

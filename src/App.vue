@@ -86,4 +86,15 @@ table {
   width: 340px;
   font-weight: 400;
 }
+.container {
+  min-height: 780px;
+  background: #f4f5f5;
+  padding: 10px 0;
+}
+.main {
+  background: #fff;
+  padding: 10px 40px;
+  max-width: 600px;
+  margin: 10px auto;
+}
 </style>

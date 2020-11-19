@@ -52,16 +52,10 @@ export default {
 }
 </script>
 
-<style>
-.container {
-  min-height: 780px;
-  background: #f4f5f5;
-  padding: 10px 0;
-}
+<style scoped>
 .main {
-  background: #fff;
   max-width: 960px;
-  margin: 10px auto;
+  padding: 0;
 }
 /* .el-tabs__item {
   font-size: 16px !important;
