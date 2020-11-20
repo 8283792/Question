@@ -45,7 +45,7 @@
 
 
       <el-dialog
-        :visible="centerDialogVisible"
+        :visible.sync="centerDialogVisible"
         width="410px"
         :before-close="beforeClose"
         title="登  录"
@@ -70,7 +70,7 @@
               </span>
 
             <div class="alert-button-wrapper">
-              <el-button class="submit-button" type="primary" @click="login('ruleForm1')">登&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;录</el-button>
+              <el-button class="submit-button" type="primary" :loading="loginBtn.status" @click="login('ruleForm1')">{{loginBtn.text}}</el-button>
             </div>
           </el-form>
       </el-dialog>
@@ -93,6 +93,10 @@ export default {
       loginForm: {
         userName: '',
         password: ''
+      },
+      loginBtn: {
+        status: false,
+        text: '登 录'
       }
     }
   },
@@ -135,6 +139,9 @@ export default {
         return
       }
 
+      this.loginBtn.status = true
+      this.loginBtn.text = '登录中...'
+
       const params = {
         'authentication': JSON.stringify({
           'username': this.loginForm.userName,
@@ -152,15 +159,18 @@ export default {
         data: params,
         method: 'POST'
       })
-      
+
+      this.loginBtn.status = false
+      this.loginBtn.text = '登 录'
+
       console.log(data)
-      
-      if (data.data2.user && data.data) {
+
+      if (data && data.data && data.data2.user) {
         localStorage.setItem('_userSess', data.data2.system_id)
         this.saveUserData(data.data)
         window.location.href = '/'
         this.centerDialogVisible = false
-      } else {
+      } else if(data && data.message_text.includes('failed')){
         this.$message({
           message: '登录失败，请检查用户名/密码',
           type: 'error'
@@ -169,7 +179,8 @@ export default {
     },
     // 发布
     write(){
-      this.$router.push('/publish')
+      const url = this.$route.fullPath
+      if (url != '/publish') this.$router.push('/publish')
     },
     // 头像选择菜单
     handleCommand(command) {

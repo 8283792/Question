@@ -209,7 +209,7 @@ export default {
 	// 	'avatar_small_url': ''
   // }
   //         }
-          if (data.data2.user && data.data) {
+          if (data.data && data.data2 && data.data2.user) {
             localStorage.setItem('_userSess', data.data2.user)
             localStorage.setItem('_user', Utils.jsonToString(data.data))
             this.resetForm()

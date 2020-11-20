@@ -87,7 +87,8 @@ table {
   font-weight: 400;
 }
 .container {
-  min-height: 780px;
+	/* min-height: 780px; */
+	min-height: calc(100vh - 83px);
   background: #f4f5f5;
   padding: 10px 0;
 }
@@ -96,5 +97,35 @@ table {
   padding: 10px 40px;
   max-width: 600px;
   margin: 10px auto;
+}
+.title {
+  font-size: 20px;
+  margin-top: 20px;
+}
+.edit-box {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+.edit-left {
+  display: block;
+  width: 100px;
+}
+.edit-right {
+  display: flex;
+  font-size: 12px;
+  color: #9c9c9c;
+  align-items: center;
+}
+.edit-ipt {
+  height: 28px;
+  line-height: 28px;
+  border: 0;
+  font-size: 16px;
+  color: #9c9c9c;
+  width: 400px !important;
+  padding: 0;
+  margin-right: 10px;
+  vertical-align: middle;
 }
 </style>

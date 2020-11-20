@@ -314,28 +314,8 @@ export default {
 .container {
   min-height: calc(100vh - 83px);
 }
-
 .tab-item {
   font-size: 14px;
-}
-.title {
-  font-size: 20px;
-  margin-top: 20px;
-}
-.edit-box {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-}
-.edit-left {
-  display: block;
-  width: 100px;
-}
-.edit-right {
-  display: flex;
-  font-size: 12px;
-  color: #9c9c9c;
-  align-items: center;
 }
 .edit-desc {
   display: flex;
@@ -351,22 +331,12 @@ export default {
   width: 100px;
   margin-top: 20px;
 }
-.edit-ipt {
-  height: 28px;
-  line-height: 28px;
-  border: 0;
-  font-size: 16px;
-  color: #9c9c9c;
-  width: 400px;
-  padding: 0;
-  margin-right: 10px;
-  vertical-align: middle;
+.el-divider--horizontal {
+  margin: 18px 0;
 }
 .date-ipt>>>input {
   color: #9c9c9c;
   border: none;
 }
-.el-divider--horizontal {
-  margin: 18px 0;
-}
+
 </style>

@@ -9,8 +9,14 @@ class Http{
       method, data, url
     })
     
-    const instance = await axios(_config)
-    return instance.data;
+    return await axios(_config).then(res => {
+      return res.data
+    }).catch(e => {
+      window.Vue.prototype.$message({
+        type: 'error',
+        message: '网络通信异常'
+      })
+    })
   }
 }
 

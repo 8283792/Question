@@ -29,9 +29,9 @@ import {
   Button,
   Dialog,
   Radio,
-  // Form,
-  // FormItem,
-  // Popover,
+  Form,
+  FormItem,
+  Popover,
   Input,
   Dropdown,
   DropdownMenu,
@@ -43,7 +43,9 @@ import {
   Upload,
   RadioGroup,
   Message,
-  DatePicker
+  DatePicker,
+  Select,
+  Option
 } from 'element-ui'
 
 // Vue.use(ElementUI)
@@ -51,9 +53,9 @@ Vue.use(SlideVerify)
 Vue.use(Button)
 Vue.use(Dialog)
 Vue.use(Radio)
-// Vue.use(Form)
-// Vue.use(FormItem)
-// Vue.use(Popover)
+Vue.use(Form)
+Vue.use(FormItem)
+Vue.use(Popover)
 Vue.use(Input)
 Vue.use(Dropdown)
 Vue.use(DropdownMenu)
@@ -65,6 +67,8 @@ Vue.use(Divider)
 Vue.use(Upload)
 Vue.use(RadioGroup)
 Vue.use(DatePicker)
+Vue.use(Select)
+Vue.use(Option)
 
 Vue.prototype.$message = Message
 

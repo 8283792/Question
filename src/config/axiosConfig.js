@@ -10,9 +10,9 @@ const axiosConfig = {
   transformRequest: [function (data) {
     return Qs.stringify(data)
   }],
-  transformResponse: [function (data) {
-    return JSON.parse(data)
-  }]
+  // transformResponse: [function (data) {
+  //   return JSON.parse(data)
+  // }]
 }
 
 export {
