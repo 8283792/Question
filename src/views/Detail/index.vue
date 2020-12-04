@@ -22,8 +22,9 @@
         </div>
       </div>
       <comment
-        :avatar="user.user_avatar.avatar_small"
-        :authorId="Number(user.system_id)"
+        v-show="user.system_id"
+        :avatar="user.user_avatar && user.user_avatar.avatar_small"
+        :authorId="user.system_id && Number(user.system_id)"
         :commentList="commentList"
         :commentNum="commentList.length"
         @doSend="doSend"
@@ -71,6 +72,7 @@ export default {
     this.doc = this.$route.params.doc
     // 关闭聚焦打开表情框
     this.$refs.comment.pBodyMap[0] = true
+    this.$refs.comment
   },
   methods: {
     getReply(){
@@ -79,26 +81,26 @@ export default {
     async doSend(content){
       const user = this.user
       const targetUser = this.doc
-      const msg = {
-        // 消息id
-        id: 123,
-        // 评论用户
-        commentUser: {
-          id: user.system_id,
-          nickName: user.username,
-          avatar: user.user_avatar.avatar_small
-        },
-        // 被评论用户
-        targetUser: {
-          id: targetUser.user,
-          nickName: targetUser.author,
-          avatar: ''
-        },
-        // 评论内容
-        content: content,
-        createDate: '2020-1-1',
-        childrenList: []
-      }
+      // const msg = {
+      //   // 消息id
+      //   id: 123,
+      //   // 评论用户
+      //   commentUser: {
+      //     id: user.system_id,
+      //     nickName: user.username,
+      //     avatar: user.user_avatar.avatar_small
+      //   },
+      //   // 被评论用户
+      //   targetUser: {
+      //     id: targetUser.user,
+      //     nickName: targetUser.author,
+      //     avatar: ''
+      //   },
+      //   // 评论内容
+      //   content: content,
+      //   createDate: '2020-1-1',
+      //   childrenList: []
+      // }
       const session = localStorage.getItem('_userSess')
       const params = {
         'authentication': JSON.stringify({
