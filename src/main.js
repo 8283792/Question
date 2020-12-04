@@ -45,7 +45,9 @@ import {
   Message,
   DatePicker,
   Select,
-  Option
+  Option,
+  InfiniteScroll,
+  Tag
 } from 'element-ui'
 
 // Vue.use(ElementUI)
@@ -69,6 +71,9 @@ Vue.use(RadioGroup)
 Vue.use(DatePicker)
 Vue.use(Select)
 Vue.use(Option)
+Vue.use(InfiniteScroll)
+Vue.use(Tag)
+
 
 Vue.prototype.$message = Message
 

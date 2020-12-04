@@ -72,6 +72,9 @@ export default {
     onClick (e) {
       this.$emit('onClick', e, tinymce)
     },
+    onInput (e) {
+      this.$emit('onInput', e, tinymce)
+    },
     // 可以添加一些自己的自定义事件，如清空内容
     clear () {
       this.myValue = ''

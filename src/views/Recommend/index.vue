@@ -1,10 +1,24 @@
 <template>
-  <div class="container">
+  <div class="container wrapper">
     <div class="main">
       <el-tabs v-model="activeName" class="card-wrapper" type="card">
         <el-tab-pane label="热门" name="first">
-          <div class="list">
-            <div class="card">
+
+          <ul v-infinite-scroll="loadList" class="infinite-list list">
+            <li @click="toDetail(item)" class="card infinite-list-item" v-for="item in recentList" :key="item.system_id">
+              <div class="subtitle">
+                <div>{{item.area}}
+                  <span v-show="item.author">/</span>
+                  {{item.author}}
+                </div>
+              </div>
+              <div class="title">
+                <b>{{item.title}}</b>
+              </div>
+              <div class="subtitle">发表于 {{item.created_on}}</div>
+            </li>
+
+            <!-- <div class="card">
               <div class="subtitle">
                 <div>zeka</div>
                 <div>3小时前</div>
@@ -31,9 +45,9 @@
                   </span>
                 </a>
               </div>
-            </div>
+            </div> -->
             
-          </div>
+          </ul>
         </el-tab-pane>
         <el-tab-pane label="最新" name="second">最新</el-tab-pane>
         <el-tab-pane label="热榜" name="third">热榜</el-tab-pane>
@@ -43,19 +57,77 @@
 </template>
 
 <script>
+import { Http } from '@/utils/http'
+
 export default {
   data: function(){
     return {
-      activeName: 'first'
+      recentList: [],
+      activeName: 'first',
+      pageNo: 0,
+      pageCount: 5
+    }
+  },
+  mounted(){
+    // this.loadRecent()
+  },
+  methods: {
+    loadList(){
+      this.pageNo += 1
+      this.loadRecent()
+    },
+    async loadRecent(){
+      const session = localStorage.getItem('_userSess')
+      const params = {
+        'authentication': JSON.stringify({
+          'system_id': session
+        }),
+        'page_no': this.pageNo,
+        'topics_per_page': this.pageCount,
+        'authorization': JSON.stringify({
+          'system_id': '',
+          'mobile': '',
+          'sms_pin': '',
+          'transaction': 'Get Topics'
+        })
+      }
+      const data = await Http.request({
+        url: '/Community/Topic',
+        data: params,
+        method: 'POST'
+      })
+      if (data.data && data.data.length) {
+        this.recentList = this.recentList.concat(data.data)
+      }
+    },
+    toDetail(item){
+      this.$router.push({
+        name: 'detail',
+        params: {
+          doc: item
+        }
+      })
     }
   }
 }
 </script>
 
 <style scoped>
+.wrapper {
+  min-height: calc(100vh - 133px);
+}
 .main {
   max-width: 960px;
   padding: 0;
+}
+.list {
+  max-height: 650px;
+  overflow: auto;
+  scrollbar-width: none; /* firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+.list::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
 }
 /* .el-tabs__item {
   font-size: 16px !important;
@@ -74,7 +146,7 @@ export default {
   font-size: 14px;
 }
 .subtitle div{
-  margin: 0 4px;
+  margin: 10px 0px;
 }
 .title {
   display: flex;
@@ -82,6 +154,7 @@ export default {
   align-items: center;
   font-size: 18px;
   color: #000;
+  margin: 0;
 }
 .title-box {
   cursor: pointer;

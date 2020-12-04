@@ -39,6 +39,7 @@
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="my">我的资料</el-dropdown-item>
+          <el-dropdown-item command="myPublish">我的发布</el-dropdown-item>
           <el-dropdown-item command="exit">退出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -191,6 +192,9 @@ export default {
       } else if(command == 'my') {
         if (url == '/my') return
         this.$router.push('/my')
+      } else if (command == 'myPublish') {
+        if (url == '/myPublish') return
+        this.$router.push('/myPublish')
       }
     },
     // 重置表单

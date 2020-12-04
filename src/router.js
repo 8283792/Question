@@ -11,6 +11,8 @@ import FrontEnd from '@/views/FrontEnd'
 import My from '@/views/My'
 import Register from '@/views/Register'
 import Publish from '@/views/Publish'
+import MyPublish from '@/views/MyPublish'
+import Detail from '@/views/Detail'
 
 
 Vue.use(Router)
@@ -56,9 +58,19 @@ export default new Router({
           component: BoilingPoint,
         },
         {
+          path: '/detail',
+          name: 'detail',
+          component: Detail,
+        },
+        {
           path: '/my',
           name: 'my',
           component: My,
+        },
+        {
+          path: '/myPublish',
+          name: 'myPublish',
+          component: MyPublish,
         },
         {
           path: '/publish',

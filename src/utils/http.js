@@ -10,6 +10,12 @@ class Http{
     })
     
     return await axios(_config).then(res => {
+      if(res.data.message_no == 100) {
+        window.Vue.prototype.$message({
+          type: 'error',
+          message: '用户信息过期，请重新登录'
+        })
+      }
       return res.data
     }).catch(e => {
       window.Vue.prototype.$message({

@@ -28,16 +28,17 @@
               </span>
             </div>
             <el-divider />
-            {{ msg }}
+            <!-- {{ msg }} -->
             <tinymce-editor ref="editor"
               baseUrl="static"
               v-model="msg"
               :disabled="disabled"
+              @input="onInput"
               @onClick="onClick">
             </tinymce-editor>
             <div class="btn-wrapper">
               <el-button type="primary" @click="clear">清空</el-button>
-              <el-button type="primary" @click="pubilsh">发布</el-button>
+              <el-button type="primary" :disabled="publishBtn" @click="pubilsh">发布</el-button>
             </div>
         </el-tab-pane>
       </el-tabs>
@@ -48,6 +49,9 @@
 
 <script>
 import TinymceEditor from '@/components/tinymce-editor'
+import { Http } from '@/utils/http'
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   components: {
     TinymceEditor
@@ -57,10 +61,10 @@ export default {
       document: {
         title: '',
         classify: [{
-          value: 'backEnd',
+          value: '后端',
           label: '后端'
         }, {
-          value: 'frontEnd',
+          value: '前端',
           label: '前端'
         }, {
           value: 'Android',
@@ -72,17 +76,35 @@ export default {
           value: 'AI',
           label: '人工智能'
         }, {
-          value: 'developTools',
+          value: '开发工具',
           label: '开发工具'
         }],
         selectedValue: ''
       },
       activeName: 'publish',
-      msg: 'Welcome to Use Tinymce Editor',
-      disabled: false // 禁用富文本
+      msg: '',
+      disabled: false, // 禁用富文本
+      publishBtn: false
     }
   },
+  computed: {
+    ...mapGetters([
+      'user'
+    ])
+  },
   methods: {
+    onInput(){
+      const length = tinyMCE.activeEditor.getContent().replace(/(<([^>]+)>)/ig,"").length
+      if(length>10000){
+        this.$message({
+          message: '字符超出限制',
+          type: 'warning'
+        })
+        this.publishBtn = true
+      } else {
+        this.publishBtn = false
+      }
+    },
     // 鼠标单击的事件
     onClick (e, editor) {
       console.log('Element clicked')
@@ -93,8 +115,46 @@ export default {
     clear () {
       this.$refs.editor.clear()
     },
-    pubilsh(){
-      alert('发布')
+    async pubilsh(){
+      const session = localStorage.getItem('_userSess')
+      const params = {
+        'authentication': JSON.stringify({
+          'system_id': session
+        }),
+        'topic': JSON.stringify({
+          'system_id': '',
+          'author': '',
+          'user': this.user.system_id,
+          'tag1': '',
+          'tag2': '',
+          'sub_area': '',
+          'status': '',
+          'title': this.document.title,
+          'area': 'development',
+          'content': this.msg,
+          'created_on': ''
+        }),
+        'authorization': JSON.stringify({
+          'system_id': '',
+          'mobile': '',
+          'sms_pin': '',
+          'transaction': 'Create Topic'
+        })
+      }
+      const data = await Http.request({
+        url: '/Community/Topic',
+        data: params,
+        method: 'POST'
+      })
+      if (data.data) {
+        alert('发布成功')
+        window.location = '/'
+      } else {
+        this.$message({
+          message: '发布失败',
+          type: 'error'
+        })
+      }
     }
   }
 }
