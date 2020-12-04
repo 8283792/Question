@@ -8,7 +8,7 @@
           <div class="edit-box">
             <span class="edit-left">头像</span>
             <span class="edit-right">
-              <img class="avator" @click="handlePictureCardPreview" :src="user.user_avatar && user.user_avatar.avatar_small_url" alt="">
+              <img class="avator" @click="handlePictureCardPreview" :src="user.user_avatar && baseUrl + user.user_avatar.avatar_small_url" alt="">
               
               <span class="edit-desc">
                 仅支持jpg和png格式，大小500K以内的图片
@@ -22,7 +22,7 @@
                 </el-upload>
 
                 <el-dialog :visible.sync="dialogVisible">
-                  <img width="100%" :src="user.user_avatar && user.user_avatar.avatar_url" alt="">
+                  <img width="100%" :src="user.user_avatar && baseUrl + user.user_avatar.avatar_url" alt="">
                 </el-dialog>
               </span>
             </span>
@@ -151,7 +151,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'user'
+      'user',
+      'baseUrl'
     ])
   },
   mounted () {

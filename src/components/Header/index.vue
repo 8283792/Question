@@ -34,7 +34,7 @@
       <el-dropdown v-show="user.system_id" @command="handleCommand">
         <span class="el-dropdown-link">
           <a slot="reference">
-            <el-avatar :size="40" :src="user.user_avatar && user.user_avatar.avatar_small_url || circleUrl"></el-avatar>
+            <el-avatar :size="40" :src="user.user_avatar && baseUrl + user.user_avatar.avatar_small_url || circleUrl"></el-avatar>
           </a>
         </span>
         <el-dropdown-menu slot="dropdown">
@@ -103,7 +103,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'user'
+      'user',
+      'baseUrl'
     ])
   },
   mounted(){

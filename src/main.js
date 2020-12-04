@@ -22,6 +22,7 @@ import Vue from 'vue'
 // import 'element-ui/lib/theme-chalk/date-picker.css'
 
 import App from './App.vue'
+import { apiConfig } from './config/apiConfig'
 import router from './router'
 import store from './store'
 import SlideVerify from 'vue-monoplasty-slide-verify'
@@ -77,6 +78,7 @@ Vue.use(Tag)
 
 Vue.prototype.$message = Message
 
+window.baseUrl = apiConfig.apiBaseUrl
 
 new Vue({
   el: '#app',

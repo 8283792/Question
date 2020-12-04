@@ -65,7 +65,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'user'
+      'user',
+      'baseUrl'
     ])
   },
   mounted(){

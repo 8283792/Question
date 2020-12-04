@@ -12,6 +12,9 @@ export default new Vuex.Store({
   getters: {
     user(state) {
       return state.userData || ''
+    },
+    baseUrl(){
+      return window.baseUrl
     }
   },
   mutations: {
