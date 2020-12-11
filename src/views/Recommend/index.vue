@@ -5,17 +5,17 @@
         <el-tab-pane label="热门" name="first">
 
           <ul v-infinite-scroll="loadList" class="infinite-list list">
-            <li @click="toDetail(item)" class="card infinite-list-item" v-for="item in recentList" :key="item.system_id">
+            <li @click="toDetail(item)" class="card infinite-list-item" v-for="item in recentList" :key="item.topic.system_id">
               <div class="subtitle">
-                <div>{{item.area}}
+                <div>{{item.topic.area}}
                   <span v-show="item.author">/</span>
                   {{item.author}}
                 </div>
               </div>
               <div class="title">
-                <b>{{item.title}}</b>
+                <b>{{item.topic.title}}</b>
               </div>
-              <div class="subtitle">发表于 {{item.created_on}}</div>
+              <div class="subtitle">发表于 {{item.topic.created_on}}</div>
             </li>
 
             <!-- <div class="card">
