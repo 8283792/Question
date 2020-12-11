@@ -23,7 +23,7 @@
       </div>
       <comment
         v-show="user.system_id"
-        :avatar="user.user_avatar && user.user_avatar.avatar_small"
+        :avatar="user.user_avatar && baseUrl + user.user_avatar.avatar_small_url"
         :authorId="user.system_id && Number(user.system_id)"
         :commentList="commentList"
         :commentNum="commentList.length"
@@ -73,15 +73,45 @@ export default {
     this.doc = this.$route.params.doc
     // 关闭聚焦打开表情框
     this.$refs.comment.pBodyMap[0] = true
-    this.$refs.comment
+    if(this.doc && this.doc.system_id){
+      this.getReply()
+    } else {
+      window.location.href = '/'
+    }
   },
   methods: {
-    getReply(){
-      
+    // 获取回复列表
+    async getReply(){
+      const session = localStorage.getItem('_userSess')
+      const params = {
+        'authentication': JSON.stringify({
+          'system_id': session
+        }),
+        'topic': JSON.stringify({
+          // 'system_id': '1f1afdce0d5d4426a46bdeb64c7b39ea'
+          'system_id': this.doc.system_id
+        }),
+        'authorization': JSON.stringify({
+          'system_id': '',
+          'mobile': '',
+          'sms_pin': '',
+          'transaction': 'Get Topic Replies'
+        })
+      }
+      const data = await Http.request({
+        url: '/Community/Reply',
+        data: params,
+        method: 'POST'
+      })
+      // debugger
+      // this.$refs.comment.pBodyMap[msg.id] = true
+      const res = data.data
+      if(res && res.length){
+        this.commentList = res
+      }
     },
+    // 回复
     async doSend(content){
-      const user = this.user
-      const targetUser = this.doc
       // const msg = {
       //   // 消息id
       //   id: 123,
@@ -103,6 +133,8 @@ export default {
       //   childrenList: []
       // }
       const session = localStorage.getItem('_userSess')
+      const user = this.user
+      const targetUser = this.doc
       const params = {
         'authentication': JSON.stringify({
           'system_id': session
@@ -128,35 +160,68 @@ export default {
         data: params,
         method: 'POST'
       })
-      debugger
 
-      console.log(msg)
-      // 关闭聚焦打开表情框（消息id）
-      this.$refs.comment.pBodyMap[msg.id] = true
-      this.commentList.push(msg)
-    },
-    doChidSend(content,bid,pid){
-      const user = this.user
-      const msg = {
-        id: pid+1,
-        // 评论用户
-        commentUser: {
-          id: user.system_id,
-          nickName: user.username,
-          avatar: user.user_avatar.avatar_small
-        },
-        // 被评论用户
-        targetUser: {
-          id: bid,
-          nickName: 'targetUser.author',
-          avatar: ''
-        },
-        // 评论内容
-        content: content,
-        createDate: '2020-1-1'
+      // console.log(msg)
+      // // 关闭聚焦打开表情框（消息id）
+      // this.$refs.comment.pBodyMap[msg.id] = true
+      const res = data.data
+      if(res){
+        this.commentList.push(res)
       }
-      const targetMsg = this.commentList.find(item => item.id == pid)
-      targetMsg.childrenList.push(msg)
+    },
+    // 楼中楼回复
+    async doChidSend(content,bid,pid){
+      console.log(pid)
+      const user = this.user
+      const session = localStorage.getItem('_userSess')
+      // const msg = {
+      //   id: pid+1,
+      //   // 评论用户
+      //   commentUser: {
+      //     id: user.system_id,
+      //     nickName: user.username,
+      //     avatar: user.user_avatar.avatar_small
+      //   },
+      //   // 被评论用户
+      //   targetUser: {
+      //     id: bid,
+      //     nickName: 'targetUser.author',
+      //     avatar: ''
+      //   },
+      //   // 评论内容
+      //   content: content,
+      //   createDate: '2020-1-1'
+      // }
+
+      const params = {
+        'authentication': JSON.stringify({
+          'system_id': session
+        }),
+        'reply': JSON.stringify({
+          'system_id': '',
+          'content': content,
+          'topic': targetUser.system_id,
+          'user': user.system_id,
+          'author': '',
+          'status': '',
+          'created_on': ''
+        }),
+        'authorization': JSON.stringify({
+          'system_id': '',
+          'mobile': '',
+          'sms_pin': '',
+          'transaction': 'Create Reply'
+        })
+      }
+      // const data = await Http.request({
+      //   url: '/Community/Reply',
+      //   data: params,
+      //   method: 'POST'
+      // })
+      // debugger
+
+      // const targetMsg = this.commentList.find(item => item.id == pid)
+      // targetMsg.childrenList.push(msg)
     }
   },
   components:{

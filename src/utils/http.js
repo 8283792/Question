@@ -15,6 +15,7 @@ class Http{
           type: 'error',
           message: '用户信息过期，请重新登录'
         })
+        return
       }
       return res.data
     }).catch(e => {
