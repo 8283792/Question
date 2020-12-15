@@ -1,0 +1,42 @@
+<template>
+  <div class="user">
+    <div class="user-img">
+      <img :src="avatar ? avatar : require(baseUrl + '/static/img/icon/avatar.jpg')" />
+    </div>
+  </div>
+</template>
+
+
+<script>
+import { mapGetters, mapActions } from "vuex";
+export default {
+  props: {
+    avatar: {
+      type: String,
+      default: "",
+    },
+	},
+	computed: {
+    ...mapGetters([
+      'baseUrl'
+    ])
+  },
+  data() {
+    return {
+      comment: "",
+    };
+  },
+};
+</script>
+
+<style type="text/css" scoped>
+.user {
+  height: 50px;
+  width: 50px;
+}
+.user-img img {
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+}
+</style>

@@ -18,8 +18,7 @@ module.exports = {
         'vue': 'Vue',
         'vue-router': 'VueRouter',
         'vuex': 'Vuex',
-        'tinymce': 'Tinymce',
-        'hbl-comment': 'window.default'
+        'tinymce': 'Tinymce'
       }
     }
     /**

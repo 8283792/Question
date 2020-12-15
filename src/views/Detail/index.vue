@@ -37,7 +37,8 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import comment from 'hbl-comment'
+// import comment from 'hbl-comment'
+import comment from '@/components/Comment'
 import { Http } from '@/utils/http'
 
 export default {
