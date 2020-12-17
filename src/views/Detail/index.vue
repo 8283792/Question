@@ -40,6 +40,8 @@ import { mapGetters, mapActions } from 'vuex'
 // import comment from 'hbl-comment'
 import comment from '@/components/Comment'
 import { Http } from '@/utils/http'
+import { messageError, messageSuccsess } from '@/utils/elementTools'
+import { mixParams } from '@/utils/mixParams'
 
 export default {
   data() {
@@ -70,8 +72,7 @@ export default {
       return doc ? doc.topic : ''
     },
     ...mapGetters([
-      'user',
-      'baseUrl'
+      'user'
     ])
   },
   mounted(){
@@ -87,22 +88,13 @@ export default {
   methods: {
     // 获取回复列表
     async getReply(){
-      const session = localStorage.getItem('_userSess')
-      const params = {
-        'authentication': JSON.stringify({
-          'system_id': session
-        }),
+      let params = {
         'topic': JSON.stringify({
           // 'system_id': '1f1afdce0d5d4426a46bdeb64c7b39ea'
           'system_id': this.doc.topic.system_id
-        }),
-        'authorization': JSON.stringify({
-          'system_id': '',
-          'mobile': '',
-          'sms_pin': '',
-          'transaction': 'Get Topic Replies'
         })
       }
+      params = mixParams.mix('Get Topic Replies', params)
       const data = await Http.request({
         url: '/Community/Reply',
         data: params,
@@ -116,56 +108,40 @@ export default {
     },
     // 回复
     async doSend(content){
-      const session = localStorage.getItem('_userSess')
       const user = this.user
-      const targetUser = this.doc
-      const params = {
-        'authentication': JSON.stringify({
-          'system_id': session
-        }),
+      let params = {
         'reply': JSON.stringify({
           'system_id': '',
           'content': content,
-          'topic': targetUser.system_id,
+          'topic': this.docData.system_id,
           'user': user.system_id,
+          'quoted_reply': '',
           'author': '',
           'status': '',
           'created_on': ''
-        }),
-        'authorization': JSON.stringify({
-          'system_id': '',
-          'mobile': '',
-          'sms_pin': '',
-          'transaction': 'Create Reply'
         })
       }
+      params = mixParams.mix('Create Reply', params)
       const data = await Http.request({
         url: '/Community/Reply',
         data: params,
         method: 'POST'
       })
-
       // console.log(msg)
       // // 关闭聚焦打开表情框（消息id）
       // this.$refs.comment.pBodyMap[msg.id] = true
       const res = data.data
       if(res){
+        messageSuccsess('发布成功！')
         this.commentList.push(res)
       } else {
-        this.$message({
-          message: '发布失败！',
-          type: 'error'
-        })
+        messageError('发布失败！')
       }
     },
     // 楼中楼回复
     async doChidSend(content,bid,pid){
       const user = this.user
-      const session = localStorage.getItem('_userSess')
-      const params = {
-        'authentication': JSON.stringify({
-          'system_id': session
-        }),
+      let params = {
         'reply': JSON.stringify({
           'system_id': '',
           'content': content,
@@ -175,14 +151,9 @@ export default {
           'author': '',
           'status': '',
           'created_on': ''
-        }),
-        'authorization': JSON.stringify({
-          'system_id': '',
-          'mobile': '',
-          'sms_pin': '',
-          'transaction': 'Create Reply'
         })
       }
+      params = mixParams.mix('Create Reply', params)
       const data = await Http.request({
         url: '/Community/Reply',
         data: params,
@@ -193,10 +164,7 @@ export default {
         const targetMsg = this.commentList.find(item => item.id == pid)
         targetMsg.childrenList.push(res)
       } else {
-        this.$message({
-          message: '发布失败！',
-          type: 'error'
-        })
+        messageError('发布失败！')
       }
     }
   },

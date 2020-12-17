@@ -8,7 +8,7 @@
           <div class="edit-box">
             <span class="edit-left">头像</span>
             <span class="edit-right">
-              <img class="avator" @click="handlePictureCardPreview" :src="user.user_avatar && baseUrl + user.user_avatar.avatar_small_url" alt="">
+              <img class="avator" @click="handlePictureCardPreview" :src="user.user_avatar && user.user_avatar.avatar_small_url" alt="">
               
               <span class="edit-desc">
                 仅支持jpg和png格式，大小500K以内的图片
@@ -22,7 +22,7 @@
                 </el-upload>
 
                 <el-dialog :visible.sync="dialogVisible">
-                  <img width="100%" :src="user.user_avatar && baseUrl + user.user_avatar.avatar_url" alt="">
+                  <img width="100%" :src="user.user_avatar && user.user_avatar.avatar_url" alt="">
                 </el-dialog>
               </span>
             </span>
@@ -141,6 +141,8 @@
 import { Http } from '@/utils/http'
 import { Utils } from '@/utils/utils'
 import { mapGetters, mapActions } from 'vuex'
+import { messageError, messageSuccsess, messageWarning } from '@/utils/elementTools'
+import { mixParams } from '@/utils/mixParams'
 
 export default {
   data() {
@@ -151,8 +153,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'user',
-      'baseUrl'
+      'user'
     ])
   },
   mounted () {
@@ -164,22 +165,13 @@ export default {
   methods: {
     async update(key){
       if(!key || !this.user.system_id) return
-      const session = localStorage.getItem('_userSess')
       const user = JSON.parse(localStorage.getItem('_user'))
       user[key] = this.user[key]
 
-      const params = {
-        'authentication': JSON.stringify({
-          'system_id': session
-        }),
-        'user': JSON.stringify(user),
-        'authorization': JSON.stringify({
-          'system_id': '',
-          'mobile': '',
-          'sms_pin': '',
-          'transaction': 'Update User Info'
-        })
+      let params = {
+        'user': JSON.stringify(user)
       }
+      params = mixParams.mix('Update User Info', params)
       const data = await Http.request({
         url: '/Community/User',
         data: params,
@@ -188,15 +180,9 @@ export default {
       if(data.data && data.data.system_id){
         // localStorage.setItem('_user', JSON.stringify(data.data))
         this.saveUserData(data.data)
-        this.$message({
-          message: '修改成功',
-          type: 'success'
-        })
+        messageSuccsess('修改成功')
       } else {
-        this.$message({
-          message: `修改失败, ${data.message}`,
-          type: 'error'
-        })
+        messageError(`修改失败, ${data.message}`)
       }
     },
     httpUpload(options){
@@ -209,24 +195,16 @@ export default {
 
       this.fileReader.onload = async () => {
         let base64Str = this.fileReader.result
-        console.log(base64Str)
-
-        const session = localStorage.getItem('_userSess')
         const user = JSON.parse(localStorage.getItem('_user'))
         
-        const params = {
-          'authentication': JSON.stringify({
-            'system_id': session
-          }),
+        let params = {
           'user_avatar': JSON.stringify({
             'system_id': user.user_avatar ? user.user_avatar.system_id : '',
             'user': user.system_id,
             'avatar': base64Str
-          }),
-          'authorization': JSON.stringify({
-            'transaction': 'Update User Avatar'
           })
         }
+        params = mixParams.mix('Update User Avatar', params)
 
         // return
 
@@ -237,10 +215,7 @@ export default {
         })
 
         if(data.message_no == 100){
-          this.$message({
-            message: '您长时间未操作，请重新登录',
-            type: 'error'
-          })
+          messageError('您长时间未操作，请重新登录')
           // this.clearUserData()
           // this.$router.push('/')
           return
@@ -283,17 +258,11 @@ export default {
       const type = file.type
 
       if(type != 'image/png' && type != 'image/jpeg' && type != 'image/jpg'){
-        this.$message({
-          message: '仅支持 jpg、png、jpeg 格式的图片',
-          type: 'error'
-        })
+        messageError('仅支持 jpg、png、jpeg 格式的图片')
         return false
       }
       if (!isLt5M) {
-        this.$message({
-          message: '仅支持 500k 以内的图片',
-          type: 'error'
-        })
+        messageError('仅支持 500k 以内的图片')
         return false
       }
     },

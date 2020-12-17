@@ -34,7 +34,7 @@
       <el-dropdown v-show="user.system_id" @command="handleCommand">
         <span class="el-dropdown-link">
           <a slot="reference">
-            <el-avatar :size="40" :src="user.user_avatar && baseUrl + user.user_avatar.avatar_small_url || circleUrl"></el-avatar>
+            <el-avatar :size="40" :src="user.user_avatar && user.user_avatar.avatar_small_url || circleUrl"></el-avatar>
           </a>
         </span>
         <el-dropdown-menu slot="dropdown">
@@ -83,6 +83,7 @@
 import { Http } from '@/utils/http'
 import { Utils } from '@/utils/utils'
 import { mapGetters, mapActions } from 'vuex'
+import { messageError, messageWarning } from '@/utils/elementTools'
 
 export default {
   data(){
@@ -103,8 +104,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'user',
-      'baseUrl'
+      'user'
     ])
   },
   mounted(){
@@ -127,17 +127,11 @@ export default {
     // 登录
     async login(){
       if(!this.loginForm.userName){
-        this.$message({
-          message: '请输入用户名',
-          type: 'warning'
-        })
+        messageWarning('请输入用户名')
         return
       }
       if(!this.loginForm.password){
-        this.$message({
-          message: '请输入密码',
-          type: 'warning'
-        })
+        messageWarning('请输入密码')
         return
       }
 
@@ -173,10 +167,7 @@ export default {
         window.location.href = '/'
         this.centerDialogVisible = false
       } else if(data && data.message_text.includes('failed')){
-        this.$message({
-          message: '登录失败，请检查用户名/密码',
-          type: 'error'
-        })
+        messageError('登录失败，请检查用户名/密码')
       }
     },
     // 发布

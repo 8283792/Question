@@ -17,36 +17,6 @@
               </div>
               <div class="subtitle">发表于 {{item.topic.created_on}}</div>
             </li>
-
-            <!-- <div class="card">
-              <div class="subtitle">
-                <div>zeka</div>
-                <div>3小时前</div>
-                <div>Vue.js / 前端</div>
-              </div>
-
-              <div class="title">
-                <b>或许这就是下一代组件库</b>
-                <img class="title-img" src="https://www.baidu.com/img/flexible/logo/pc/result@2.png" alt="">
-              </div>
-
-              <div class="ding">
-                <a class="title-box">
-                  <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij4KICAgIDxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CiAgICAgICAgPHBhdGggZD0iTTAgMGgxNnYxNkgweiIvPgogICAgICAgIDxwYXRoIGZpbGw9IiNCMkJBQzIiIGQ9Ik00LjIzNCA2LjY5M3Y3LjI0M0gyLjg4MWMtLjQ4NiAwLS44ODEtLjQ5Mi0uODgxLTEuMDk1VjcuODc1YzAtLjYzLjQxMi0xLjE4Mi44OC0xLjE4MmgxLjM1NHptMy42ODgtMy43QzguMDEgMi40MDQgOC40OSAxLjk5IDkuMDE4IDJjLjc1NC4wMTUgMS4yMDQuNjYzIDEuMzYuOTgzLjI4NC41ODUuMjkyIDEuNTQ5LjA5NyAyLjE2Ny0uMTc3LjU2LS41ODYgMS4yOTYtLjU4NiAxLjI5NmgzLjA2NmMuMzI0IDAgLjYyNS4xNjQuODI2LjQ0OS4yMDQuMjkuMjcuNjY4LjE3OCAxLjAxMWwtMS4zODcgNS4xODNjLS4xMjYuNDk5LS41NDQuODQ3LTEuMDE2Ljg0N0g1LjUzVjYuNjkzYzEuMzg1LS4zMDkgMi4yMzYtMi42MzIgMi4zOTItMy43eiIvPgogICAgPC9nPgo8L3N2Zz4K" class="icon">
-                  <span class="count">
-                    26
-                  </span>
-                </a>
-
-                <a class="title-box">
-                  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PHRpdGxlPjc1MzFEREU0LTZCMzgtNDI4Ny04QTJBLUY2ODVGMDgzNUFGQzwvdGl0bGU+PGRlZnM+PHJlY3QgaWQ9ImEiIHg9IjU5IiB5PSI1NCIgd2lkdGg9IjU0IiBoZWlnaHQ9IjI1IiByeD0iMSIvPjxtYXNrIGlkPSJiIiB4PSIwIiB5PSIwIiB3aWR0aD0iNTQiIGhlaWdodD0iMjUiIGZpbGw9IiNmZmYiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48L21hc2s+PC9kZWZzPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC02OCAtNTYpIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiNCMkJBQzIiIGQ9Ik03MiA2MXY4LjAzOGg0LjQ0NEw4MS4xMTEgNzJ2LTIuOTYySDg0VjYxeiIvPjx1c2Ugc3Ryb2tlPSIjRURFRUVGIiBtYXNrPSJ1cmwoI2IpIiBzdHJva2Utd2lkdGg9IjIiIHhsaW5rOmhyZWY9IiNhIi8+PC9nPjwvc3ZnPg==" class="icon">
-                  <span class="count">
-                    10
-                  </span>
-                </a>
-              </div>
-            </div> -->
-            
           </ul>
         </el-tab-pane>
         <el-tab-pane label="最新" name="second">最新</el-tab-pane>
@@ -58,6 +28,8 @@
 
 <script>
 import { Http } from '@/utils/http'
+import { messageError, messageSuccsess, messageWarning } from '@/utils/elementTools'
+import { mixParams } from '@/utils/mixParams'
 
 export default {
   data: function(){
@@ -77,20 +49,11 @@ export default {
       this.loadRecent()
     },
     async loadRecent(){
-      const session = localStorage.getItem('_userSess')
-      const params = {
-        'authentication': JSON.stringify({
-          'system_id': session
-        }),
+      let params = {
         'page_no': this.pageNo,
-        'topics_per_page': this.pageCount,
-        'authorization': JSON.stringify({
-          'system_id': '',
-          'mobile': '',
-          'sms_pin': '',
-          'transaction': 'Get Topics'
-        })
+        'topics_per_page': this.pageCount
       }
+      params = mixParams.mix('Get Topics', params)
       const data = await Http.request({
         url: '/Community/Topic',
         data: params,

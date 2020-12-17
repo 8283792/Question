@@ -15,8 +15,7 @@
 
         <tinymce-editor
           ref="editor"
-          @focus="showButton(0)"
-          baseUrl="static"
+          :baseUrl="baseUrl"
           v-model="msg"
           :disabled="disabled"
           @input="onInput"
@@ -54,7 +53,7 @@
       </div>
     </div>
 
-    <div v-for="(item, index) in commentList" class="hbl-child">
+    <div v-for="(item, index) in commentList" :key="index" class="hbl-child">
       <div class="reply"></div>
       <div class="content">
         <div class="comment-f">
@@ -98,7 +97,6 @@
             :showAvatar="showAvatar"
           >
             <el-input
-              @focus="showButton(item.id)"
               type="textarea"
               :autosize="{ minRows: minRows, maxRows: maxRows }"
               :placeholder="placeholder"
@@ -106,15 +104,15 @@
             >
             </el-input>
 
-            <div v-if="buttonMap[item.id]" class="hbl-owo">
-              <div :class="pBodyMap[item.id]?'OwO':'OwO OwO-open'" class="emoj publish" :style="{width:emojiWidth}">
+            <div class="hbl-owo">
+              <div :class="pBodyMap[item.id]?'OwO OwO-open':'OwO'" class="emoj publish" :style="{width:emojiWidth}">
 								<div class="OwO-logo" @click="pBodyStatus(item.id)">
 									<span>Emoji表情</span>
 								</div>
-								<div class="OwO-body">
+								<div v-if="pBodyMap[item.id]" class="OwO-body">
 									<ul class="OwO-items OwO-items-show">
 										<li class="OwO-item" v-for="(oitem,index) in OwOlist" :key="'oitem'+index" @click="choseEmoji(item.id,oitem.title)">
-											<img :src="require(baseUrl + '/static/img/face/'+oitem.url)" alt="">
+											<img :src="baseUrl + '/static/img/face/'+oitem.url" alt="">
 										</li>
 									</ul>
 								</div>
@@ -136,7 +134,7 @@
         </div>
       </div>
 
-      <div class="children" v-for="(ritem, jndex) in item.childrenList">
+      <div class="children" v-for="(ritem, jndex) in item.childrenList" :key="jndex">
         <div class="reply"></div>
         <div class="content">
           <div class="comment-f">
@@ -188,7 +186,6 @@
               :showAvatar="showAvatar"
             >
               <el-input
-                @focus="showButton(ritem.id)"
                 type="textarea"
                 :autosize="{ minRows: minRows, maxRows: maxRows }"
                 :placeholder="placeholder"
@@ -196,15 +193,15 @@
               >
               </el-input>
 
-              <div v-if="buttonMap[ritem.id]" class="hbl-owo">
-                <div :class="pBodyMap[ritem.id]?'OwO':'OwO OwO-open'" class="emoj publish" :style="{width:emojiWidth}">
+              <div class="hbl-owo">
+                <div :class="pBodyMap[ritem.id]?'OwO OwO-open':'OwO'" class="emoj publish" :style="{width:emojiWidth}">
 									<div class="OwO-logo" @click="pBodyStatus(ritem.id)">
 											<span>Emoji表情</span>
 									</div>
-									<div class="OwO-body">
+									<div v-if="pBodyMap[ritem.id]" class="OwO-body">
 											<ul class="OwO-items OwO-items-show">
 													<li class="OwO-item" v-for="(oitem,index) in OwOlist" :key="'oitem'+index" @click="choseEmoji(ritem.id,oitem.title)">
-															<img :src="require(baseUrl + '/static/img/face/'+oitem.url)" alt="">
+															<img :src="baseUrl + '/static/img/face/'+oitem.url" alt="">
 													</li>
 											</ul>
 										
@@ -315,11 +312,6 @@ export default {
       type: String,
       default: "80%",
     },
-  },
-  computed: {
-    ...mapGetters([
-      'baseUrl'
-    ])
   },
   data() {
     return {
@@ -435,6 +427,7 @@ export default {
     },
     showButton(index) {
       //this.showFlag = true;
+      // debugger
       console.log(index + "index");
       this.$set(this.buttonMap, index, true);
     },
@@ -451,6 +444,7 @@ export default {
       //console.log("====="+this.textarea);
       this.$emit("doSend", this.textareaMap[0]);
       this.$set(this.textareaMap, 0, "");
+      this.$refs.editor.clear()
     },
     doChidSend(index, commentUserId, pid) {
       this.$emit("doChidSend", this.textareaMap[index], commentUserId, pid);
@@ -480,7 +474,7 @@ export default {
               break;
             }
           }
-          var s = require(this.baseUrl + "/static/img/face/" + src);
+          var s = this.baseUrl + "/static/img/face/" + src
           var imoj = "<img src='" + s + "'/>";
 
           str = str.replace(pattern2, imoj);

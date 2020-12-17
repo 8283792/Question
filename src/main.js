@@ -48,7 +48,8 @@ import {
   Select,
   Option,
   InfiniteScroll,
-  Tag
+  Tag,
+  Loading
 } from 'element-ui'
 
 // Vue.use(ElementUI)
@@ -74,11 +75,13 @@ Vue.use(Select)
 Vue.use(Option)
 Vue.use(InfiniteScroll)
 Vue.use(Tag)
+Vue.use(Loading.directive)
 
 
 Vue.prototype.$message = Message
+Vue.prototype.$loading = Loading.service
 
-window.baseUrl = apiConfig.apiBaseUrl
+Vue.prototype.baseUrl = apiConfig.apiBaseUrl
 
 new Vue({
   el: '#app',

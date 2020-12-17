@@ -30,7 +30,7 @@
             <el-divider />
             <!-- {{ msg }} -->
             <tinymce-editor ref="editor"
-              baseUrl="static"
+              :baseUrl="baseUrl"
               v-model="msg"
               :disabled="disabled"
               @input="onInput"
@@ -51,10 +51,15 @@
 import TinymceEditor from '@/components/tinymce-editor'
 import { Http } from '@/utils/http'
 import { mapGetters, mapActions } from 'vuex'
+import { messageError, messageSuccsess, messageWarning } from '@/utils/elementTools'
+import { mixParams } from '@/utils/mixParams'
 
 export default {
   components: {
     TinymceEditor
+  },
+  mounted(){
+    this.getArea()
   },
   data () {
     return {
@@ -96,10 +101,7 @@ export default {
     onInput(){
       const length = tinyMCE.activeEditor.getContent().replace(/(<([^>]+)>)/ig,"").length
       if(length>10000){
-        this.$message({
-          message: '字符超出限制',
-          type: 'warning'
-        })
+        messageWarning('字符超出限制')
         this.publishBtn = true
       } else {
         this.publishBtn = false
@@ -107,20 +109,34 @@ export default {
     },
     // 鼠标单击的事件
     onClick (e, editor) {
-      console.log('Element clicked')
-      console.log(e)
-      console.log(editor)
+      // console.log('Element clicked')
+      // console.log(e)
+      // console.log(editor)
     },
     // 清空内容
     clear () {
       this.$refs.editor.clear()
     },
-    async pubilsh(){
-      const session = localStorage.getItem('_userSess')
+    // 获取文章分类
+    async getArea(){
       const params = {
-        'authentication': JSON.stringify({
-          'system_id': session
-        }),
+        'authorization': JSON.stringify({
+          'system_id': '',
+          'mobile': '',
+          'sms_pin': '',
+          'transaction': 'Get Area Choices'
+        })
+      }
+      const data = await Http.request({
+        url: '/Community/Topic',
+        data: params,
+        method: 'POST'
+      })
+      console.log(data)
+      debugger
+    },
+    async pubilsh(){
+      let params = {
         'topic': JSON.stringify({
           'system_id': '',
           'author': '',
@@ -133,13 +149,12 @@ export default {
           'area': 'development',
           'content': this.msg,
           'created_on': ''
-        }),
-        'authorization': JSON.stringify({
-          'system_id': '',
-          'mobile': '',
-          'sms_pin': '',
-          'transaction': 'Create Topic'
         })
+      }
+      params = mixParams.mix('Create Topic', params)
+      if(!this.document.title.length){
+        messageWarning('标题不能为空！')
+        return
       }
       const data = await Http.request({
         url: '/Community/Topic',
@@ -150,10 +165,7 @@ export default {
         alert('发布成功')
         window.location = '/'
       } else {
-        this.$message({
-          message: '发布失败',
-          type: 'error'
-        })
+        messageError('发布失败')
       }
     }
   }

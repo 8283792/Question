@@ -42,7 +42,7 @@ export default {
   data () {
     return {
       init: {
-        language_url: 'https://sap-experts.pub/static/tinymce/langs/zh_CN.js',
+        language_url: `${this.baseUrl}/static/tinymce/langs/zh_CN.js`,
         language: 'zh_CN',
         skin_url: 'https://cdn.bootcdn.net/ajax/libs/tinymce/5.0.3/skins/ui/oxide/',
         content_css: 'https://cdn.bootcdn.net/ajax/libs/tinymce/5.0.3/skins/content/default/content.min.css',
