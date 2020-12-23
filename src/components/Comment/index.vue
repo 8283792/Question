@@ -20,6 +20,7 @@
           :disabled="disabled"
           @input="onInput"
           @onClick="onClick"
+          @clear="clear"
         >
         </tinymce-editor>
 
@@ -439,15 +440,17 @@ export default {
       console.log(index + "index");
       //this.showFlag = false;
     },
+    clear (){
+      this.$refs.editor.clear()
+    },
     doSend() {
 			this.textareaMap[0] = this.msg
       //console.log("====="+this.textarea);
       this.$emit("doSend", this.textareaMap[0]);
       this.$set(this.textareaMap, 0, "");
-      this.$refs.editor.clear()
     },
     doChidSend(index, commentUserId, pid) {
-      this.$emit("doChidSend", this.textareaMap[index], commentUserId, pid);
+      this.$emit("doChidSend", this.textareaMap[index], commentUserId, pid, index);
       this.$set(this.textareaMap, index, "");
     },
 

@@ -16,11 +16,6 @@ export default {
       default: "",
     },
 	},
-	computed: {
-    ...mapGetters([
-      'baseUrl'
-    ])
-  },
   data() {
     return {
       comment: "",

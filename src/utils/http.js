@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { apiConfig } from '@/config/apiConfig'
 import { axiosConfig } from '@/config/axiosConfig'
-import { messageError, messageSuccsess, loading } from '@/utils/elementTools'
+import { messageError, loading } from '@/utils/elementTools'
 
 class Http{
   static async request({url, data, method = 'GET'}){

@@ -20,9 +20,9 @@
                 <el-select v-model="document.selectedValue" placeholder="请选择">
                   <el-option
                     v-for="item in document.classify"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    :key="item.system_id"
+                    :label="item.display_name"
+                    :value="item.name">
                   </el-option>
                 </el-select>
               </span>
@@ -53,6 +53,7 @@ import { Http } from '@/utils/http'
 import { mapGetters, mapActions } from 'vuex'
 import { messageError, messageSuccsess, messageWarning } from '@/utils/elementTools'
 import { mixParams } from '@/utils/mixParams'
+import { Check } from '@/utils/check'
 
 export default {
   components: {
@@ -89,7 +90,8 @@ export default {
       activeName: 'publish',
       msg: '',
       disabled: false, // 禁用富文本
-      publishBtn: false
+      publishBtn: false,
+      max_words: 0 // 最大可输入字符数
     }
   },
   computed: {
@@ -100,7 +102,7 @@ export default {
   methods: {
     onInput(){
       const length = tinyMCE.activeEditor.getContent().replace(/(<([^>]+)>)/ig,"").length
-      if(length>10000){
+      if(length>this.max_words){
         messageWarning('字符超出限制')
         this.publishBtn = true
       } else {
@@ -119,21 +121,16 @@ export default {
     },
     // 获取文章分类
     async getArea(){
-      const params = {
-        'authorization': JSON.stringify({
-          'system_id': '',
-          'mobile': '',
-          'sms_pin': '',
-          'transaction': 'Get Area Choices'
-        })
-      }
+      const params = mixParams.mix('')
       const data = await Http.request({
-        url: '/Community/Topic',
+        url: '/Community/Topic_Configuration',
         data: params,
         method: 'POST'
       })
       console.log(data)
-      debugger
+      this.document.classify = data.data.topic_area_choices
+      this.max_words = data.data.max_words
+
     },
     async pubilsh(){
       let params = {
@@ -156,16 +153,18 @@ export default {
         messageWarning('标题不能为空！')
         return
       }
+
+      if(!Check.topicImg(this.msg)) return
       const data = await Http.request({
         url: '/Community/Topic',
         data: params,
         method: 'POST'
       })
-      if (data.data) {
+      if (data.message_text.includes('success')) {
         alert('发布成功')
         window.location = '/'
       } else {
-        messageError('发布失败')
+        messageError(`发布失败！${data.message_text}`)
       }
     }
   }

@@ -12,18 +12,18 @@
       <h1 class="title">{{docData.title}}</h1>
       <div class="content" v-html="docData.content"></div>
 
-      <div v-show="docData.area">
-        <el-divider />
+      <el-divider />
+      <div v-show="doc.area_display_name">
         <div>分类：</div>
         <div class="tag">
           <el-tag tag="success">
-            {{docData.area}}
+            {{doc.area_display_name}}
           </el-tag>
         </div>
       </div>
       <comment
         v-show="user.system_id"
-        :avatar="user.user_avatar && baseUrl + user.user_avatar.avatar_small_url"
+        :avatar="user.user_avatar && user.user_avatar.avatar_small_url"
         :authorId="user.system_id && Number(user.system_id)"
         :commentList="commentList"
         :commentNum="commentList.length"
@@ -100,7 +100,6 @@ export default {
         data: params,
         method: 'POST'
       })
-      // this.$refs.comment.pBodyMap[msg.id] = true
       const res = data.data
       if(res && res.length){
         this.commentList = res
@@ -127,19 +126,18 @@ export default {
         data: params,
         method: 'POST'
       })
-      // console.log(msg)
-      // // 关闭聚焦打开表情框（消息id）
-      // this.$refs.comment.pBodyMap[msg.id] = true
       const res = data.data
       if(res){
         messageSuccsess('发布成功！')
         this.commentList.push(res)
+        this.$refs.comment.clear()
       } else {
         messageError('发布失败！')
       }
     },
     // 楼中楼回复
-    async doChidSend(content,bid,pid){
+    async doChidSend(content,bid,pid, idx){
+      console.log(bid, 'bid')
       const user = this.user
       let params = {
         'reply': JSON.stringify({
@@ -162,7 +160,9 @@ export default {
       const res = data.data
       if(res){
         const targetMsg = this.commentList.find(item => item.id == pid)
+        messageSuccsess('发布成功！')
         targetMsg.childrenList.push(res)
+        this.$refs.comment.cancel(idx)
       } else {
         messageError('发布失败！')
       }
@@ -197,6 +197,6 @@ export default {
   margin: 10px 0px;
 }
 .tag {
-  margin: 10px 0 0 0;
+  margin: 16px 0 0 20px;
 }
 </style>
