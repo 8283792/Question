@@ -11,22 +11,22 @@
         <a :class="routeHash == '#/home/frontEnd' ? 'nav-active' : ''" href="#/home/frontEnd">前端</a>
       </li>
       <li>
-        <a :class="routeHash == '#/' ? 'nav-active' : ''" href="">Android</a>
+        <a :class="routeHash == '#/' ? 'nav-active' : ''" href>Android</a>
       </li>
       <li>
-        <a :class="routeHash == '#/' ? 'nav-active' : ''" href="">IOS</a>
+        <a :class="routeHash == '#/' ? 'nav-active' : ''" href>IOS</a>
       </li>
       <li>
-        <a :class="routeHash == '#/' ? 'nav-active' : ''" href="">人工智能</a>
+        <a :class="routeHash == '#/' ? 'nav-active' : ''" href>人工智能</a>
       </li>
       <li>
-        <a :class="routeHash == '#/' ? 'nav-active' : ''" href="">开发工具</a>
+        <a :class="routeHash == '#/' ? 'nav-active' : ''" href>开发工具</a>
       </li>
       <li>
-        <a :class="routeHash == '#/' ? 'nav-active' : ''" href="">代码人生</a>
+        <a :class="routeHash == '#/' ? 'nav-active' : ''" href>代码人生</a>
       </li>
       <li>
-        <a :class="routeHash == '#/' ? 'nav-active' : ''" href="">阅读</a>
+        <a :class="routeHash == '#/' ? 'nav-active' : ''" href>阅读</a>
       </li>
     </ul>
   </div>
@@ -34,14 +34,14 @@
 
 <script>
 export default {
-  data(){
+  data () {
     return {
       routeHash: '#/home/recommend'
     }
   },
   methods: {
-    routeTo($ev){
-      if($ev.target.tagName == 'A') {
+    routeTo ($ev) {
+      if ($ev.target.tagName == 'A') {
         this.routeHash = $ev.target.hash
       }
     }

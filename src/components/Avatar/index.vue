@@ -1,27 +1,27 @@
 <template>
   <div class="user">
     <div class="user-img">
-      <img :src="avatar ? avatar : require(baseUrl + '/static/img/icon/avatar.jpg')" />
+      <img :src="avatar ? avatar : baseUrl + '/static/img/icon/avatar.jpg'" />
     </div>
   </div>
 </template>
 
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions } from "vuex"
 export default {
   props: {
     avatar: {
       type: String,
       default: "",
     },
-	},
-  data() {
+  },
+  data () {
     return {
       comment: "",
-    };
+    }
   },
-};
+}
 </script>
 
 <style type="text/css" scoped>

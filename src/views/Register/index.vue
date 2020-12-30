@@ -1,63 +1,67 @@
 <template>
   <div>
-    <el-dialog
-        :visible="true"
-        title="注  册"
-        width="410px"
-        :show-close="false"
-        center>
-        <el-form :model="registForm" :rules="rules" ref="registForm" label-width="22%" class="login-form">
-            <el-form-item label="用户名：" prop="userName">
-              <el-popover
-                ref="userNamePopover"
-                placement="right"
-                width="100"
-                trigger="focus"
-                content="8-16位，只允许中英文，数字和_，中文最多8个">
-              </el-popover>
-              <el-input v-popover:userNamePopover v-model="registForm.userName" placeholder="请输入用户名"></el-input>
-            </el-form-item>
+    <el-dialog :visible="true" title="注  册" width="410px" :show-close="false" center>
+      <el-form
+        :model="registForm"
+        :rules="rules"
+        ref="registForm"
+        label-width="22%"
+        class="login-form"
+      >
+        <el-form-item label="用户名：" prop="userName">
+          <el-popover
+            ref="userNamePopover"
+            placement="right"
+            width="100"
+            trigger="focus"
+            content="8-16位，只允许中英文，数字和_，中文最多8个"
+          ></el-popover>
+          <el-input v-popover:userNamePopover v-model="registForm.userName" placeholder="请输入用户名"></el-input>
+        </el-form-item>
 
-            <el-form-item label="密  码：" prop="password">
-              <el-popover
-                ref="pwdPopover"
-                placement="right"
-                width="100"
-                trigger="focus"
-                content="8-16位，只允许数字，英文，部分特殊字符">
-              </el-popover>
-              <el-input v-popover:pwdPopover v-model="registForm.password" placeholder="请输入密码" show-password></el-input>
-            </el-form-item>
+        <el-form-item label="密  码：" prop="password">
+          <el-popover
+            ref="pwdPopover"
+            placement="right"
+            width="100"
+            trigger="focus"
+            content="8-16位，只允许数字，英文，部分特殊字符"
+          ></el-popover>
+          <el-input
+            v-popover:pwdPopover
+            v-model="registForm.password"
+            placeholder="请输入密码"
+            show-password
+          ></el-input>
+        </el-form-item>
 
-            <el-form-item label="手机号：" prop="mobile">
-              <el-input v-model="registForm.mobile" placeholder="请输入手机号">
-                <el-button @click="subSMS" size="small" slot="append" type="primary">{{SMSText}}</el-button>
-              </el-input>
-            </el-form-item>
+        <el-form-item label="手机号：" prop="mobile">
+          <el-input v-model="registForm.mobile" placeholder="请输入手机号">
+            <el-button @click="subSMS" size="small" slot="append" type="primary">{{SMSText}}</el-button>
+          </el-input>
+        </el-form-item>
 
-            <el-form-item v-show="verCodeVisible" label="验证码：" prop="verCode">
-              <el-input v-model="registForm.verCode" placeholder="请输入验证码"></el-input>
-            </el-form-item>
+        <el-form-item v-show="verCodeVisible" label="验证码：" prop="verCode">
+          <el-input v-model="registForm.verCode" placeholder="请输入验证码"></el-input>
+        </el-form-item>
 
-            <slide-verify
-              v-show="verifyVisible"
-              :l="42"
-              :r="10"
-              :w="310"
-              :h="155"
-              ref="slideblock"
-              @success="onSuccess"
-              @fail="onFail"
-              @refresh="onRefresh"
-              :slider-text="text"
-            ></slide-verify>
+        <slide-verify
+          v-show="verifyVisible"
+          :l="42"
+          :r="10"
+          :w="310"
+          :h="155"
+          ref="slideblock"
+          @success="onSuccess"
+          @fail="onFail"
+          @refresh="onRefresh"
+          :slider-text="text"
+        ></slide-verify>
 
-            <div class="alert-button-wrapper">
-              <el-button class="submit-button" type="primary" @click="regist()">注 册</el-button>
-            </div>
-
-          </el-form>
-
+        <div class="alert-button-wrapper">
+          <el-button class="submit-button" type="primary" @click="regist()">注 册</el-button>
+        </div>
+      </el-form>
     </el-dialog>
   </div>
 </template>
@@ -69,7 +73,7 @@ import { Time } from '@/utils/time'
 import { messageError, messageSuccsess, messageWarning } from '@/utils/elementTools'
 
 export default {
-  data: function(){
+  data: function () {
     const userNameCheck = (rule, value, callback) => {
       setTimeout(async () => {
         if (await this.checkUserName() == 'yes') {
@@ -83,10 +87,10 @@ export default {
     const mobileCheck = (rule, value, callback) => {
       setTimeout(async () => {
         const phone = this.registForm.mobile
-        if(!phone){
+        if (!phone) {
           callback(new Error('请输入手机号'));
         }
-        else if(!/^[1][3,4,5,7,8][0-9]{9}$/.test(phone)){
+        else if (!/^[1][3,4,5,7,8][0-9]{9}$/.test(phone)) {
           callback(new Error('手机号码有误，请重新输入'))
         } else {
           callback()
@@ -126,25 +130,25 @@ export default {
       }
     }
   },
-  mounted(){
+  mounted () {
     document.querySelector('.v-modal').style.zIndex = 111
     this.userNameTip = true
   },
   methods: {
-    regist(){
-      if(!this.registForm.userName){
+    regist () {
+      if (!this.registForm.userName) {
         messageWarning('请输入用户名')
         return
       }
-      if(!this.registForm.password){
+      if (!this.registForm.password) {
         messageWarning('请输入密码')
         return
       }
-      if(!this.registForm.mobile){
+      if (!this.registForm.mobile) {
         messageWarning('请输入手机号')
         return
       }
-      if(!this.registForm.verCode){
+      if (!this.registForm.verCode) {
         messageWarning('请输入验证码')
         return
       }
@@ -194,10 +198,10 @@ export default {
       })
     },
     // 检查用户名
-    async checkUserName(){
+    async checkUserName () {
       const params = {
-        user: Utils.jsonToString({username: this.registForm.userName}),
-        authorization: Utils.jsonToString({transaction: 'Check Username'})
+        user: Utils.jsonToString({ username: this.registForm.userName }),
+        authorization: Utils.jsonToString({ transaction: 'Check Username' })
       }
       const data = await Http.request({
         url: '/Community/User',
@@ -208,17 +212,17 @@ export default {
       return data.message_text
     },
     // 点击获取验证码
-    subSMS() {
+    subSMS () {
       const mobile = this.registForm.mobile
-      if(!mobile){
+      if (!mobile) {
         messageWarning('请输入手机号')
         return
       }
-      if(!/^[1][3,4,5,7,8][0-9]{9}$/.test(mobile)){
+      if (!/^[1][3,4,5,7,8][0-9]{9}$/.test(mobile)) {
         messageWarning('请输入正确的手机号')
         return
       }
-      if(this.flag){
+      if (this.flag) {
         this.flag = false
         this.verifyVisible = true
         // 开始倒计时
@@ -226,17 +230,17 @@ export default {
       }
     },
     // 倒计时
-    countTime(){
+    countTime () {
       new Time(65, this)
     },
     // 验证码成功回调
-    onSuccess(){
+    onSuccess () {
       this.$refs.slideblock.reset()
       this.verCodeVisible = true
       this.verifyVisible = false
       this.sendSms()
     },
-    async sendSms(){
+    async sendSms () {
       const params = {
         'authorization': JSON.stringify({
           'system_id': '',
@@ -253,16 +257,16 @@ export default {
       this.registForm.system_id = data.data.system_id
       messageSuccsess('验证码已经发送，请注意查看手机短信')
     },
-    onFail(){
+    onFail () {
       this.msg = ''
       this.verCodeVisible = false
     },
-    onRefresh(){
+    onRefresh () {
       this.msg = ''
       this.verCodeVisible = false
     },
     // 重置表单
-    resetForm(){
+    resetForm () {
       this.$refs.slideblock.reset()
       this.verifyVisible = false
       this.verCodeVisible = false

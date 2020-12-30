@@ -12,19 +12,19 @@ export default new Vuex.Store({
   getters: {
     user(state) {
       return state.userData || ''
-    }
+    },
   },
   mutations: {
-    SET_USER_DATA (state, user) {
+    SET_USER_DATA(state, user) {
       state.userData = user
     },
   },
   actions: {
-    saveUserData({commit}, user) {
+    saveUserData({ commit }, user) {
       commit('SET_USER_DATA', setUserData(user))
     },
-    clearUserData({commit}) {
+    clearUserData({ commit }) {
       commit('SET_USER_DATA', clearUser())
-    }
-  }
+    },
+  },
 })

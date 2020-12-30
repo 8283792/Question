@@ -49,7 +49,7 @@ import {
   Option,
   InfiniteScroll,
   Tag,
-  Loading
+  Loading,
 } from 'element-ui'
 
 // Vue.use(ElementUI)
@@ -77,7 +77,6 @@ Vue.use(InfiniteScroll)
 Vue.use(Tag)
 Vue.use(Loading.directive)
 
-
 Vue.prototype.$message = Message
 Vue.prototype.$loading = Loading.service
 
@@ -87,5 +86,5 @@ new Vue({
   el: '#app',
   router,
   store,
-  render: h => h(App)
+  render: (h) => h(App),
 })

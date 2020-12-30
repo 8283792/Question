@@ -2,7 +2,7 @@
   <div class="header">
     <div class="header-container">
       <a href="/">
-        <img src="//s3.pstatp.com/toutiao/xitu_juejin_web/img/logo.a7995ad.svg" alt="">
+        <img src="//s3.pstatp.com/toutiao/xitu_juejin_web/img/logo.a7995ad.svg" alt />
       </a>
 
       <ul @click="routeTo($event)" class="nav-list">
@@ -13,13 +13,13 @@
           <a :class="routeHash == '#/boilingPoint' ? 'nav-active' : ''" href="#/boilingPoint">沸点</a>
         </li>
         <li>
-          <a href="">话题</a>
+          <a href>话题</a>
         </li>
         <li>
-          <a href="">小册</a>
+          <a href>小册</a>
         </li>
         <li>
-          <a href="">活动</a>
+          <a href>活动</a>
         </li>
       </ul>
 
@@ -34,7 +34,10 @@
       <el-dropdown v-show="user.system_id" @command="handleCommand">
         <span class="el-dropdown-link">
           <a slot="reference">
-            <el-avatar :size="40" :src="user.user_avatar && user.user_avatar.avatar_small_url || circleUrl"></el-avatar>
+            <el-avatar
+              :size="40"
+              :src="user.user_avatar && user.user_avatar.avatar_small_url || circleUrl"
+            ></el-avatar>
           </a>
         </span>
         <el-dropdown-menu slot="dropdown">
@@ -44,36 +47,37 @@
         </el-dropdown-menu>
       </el-dropdown>
 
-
       <el-dialog
         :visible.sync="centerDialogVisible"
         width="410px"
         :before-close="beforeClose"
         title="登  录"
-        center>
-
+        center
+      >
         <el-form :model="loginForm" ref="ruleForm1" label-width="22%" class="login-form">
-            <el-form-item label="用户名：" prop="userName">
-              <el-input v-model="loginForm.userName" placeholder="请输入用户名"></el-input>
-            </el-form-item>
+          <el-form-item label="用户名：" prop="userName">
+            <el-input v-model="loginForm.userName" placeholder="请输入用户名"></el-input>
+          </el-form-item>
 
-            <el-form-item label="密  码：" prop="password">
-              <el-input v-model="loginForm.password" placeholder="请输入密码" show-password></el-input>
-            </el-form-item>
+          <el-form-item label="密  码：" prop="password">
+            <el-input v-model="loginForm.password" placeholder="请输入密码" show-password></el-input>
+          </el-form-item>
 
-            
-              <span class="register-link">
-                新用户
-                <a href="#/register">
-                  点击这里
-                </a>
-                注册
-              </span>
+          <span class="register-link">
+            新用户
+            <a href="#/register">点击这里</a>
+            注册
+          </span>
 
-            <div class="alert-button-wrapper">
-              <el-button class="submit-button" type="primary" :loading="loginBtn.status" @click="login('ruleForm1')">{{loginBtn.text}}</el-button>
-            </div>
-          </el-form>
+          <div class="alert-button-wrapper">
+            <el-button
+              class="submit-button"
+              type="primary"
+              :loading="loginBtn.status"
+              @click="login('ruleForm1')"
+            >{{loginBtn.text}}</el-button>
+          </div>
+        </el-form>
       </el-dialog>
     </div>
   </div>
@@ -86,7 +90,7 @@ import { mapGetters, mapActions } from 'vuex'
 import { messageError, messageWarning } from '@/utils/elementTools'
 
 export default {
-  data(){
+  data () {
     return {
       routeHash: '#/',
       circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
@@ -107,30 +111,30 @@ export default {
       'user'
     ])
   },
-  mounted(){
+  mounted () {
   },
   methods: {
-    routeTo($ev){
-      if($ev.target.tagName == 'A') {
+    routeTo ($ev) {
+      if ($ev.target.tagName == 'A') {
         this.routeHash = $ev.target.hash
       }
     },
     // 打开登录窗口
-    openLogin(){
+    openLogin () {
       this.centerDialogVisible = true
     },
     // 关闭窗口前执行
-    beforeClose(){
+    beforeClose () {
       this.resetForm()
       this.centerDialogVisible = false
     },
     // 登录
-    async login(){
-      if(!this.loginForm.userName){
+    async login () {
+      if (!this.loginForm.userName) {
         messageWarning('请输入用户名')
         return
       }
-      if(!this.loginForm.password){
+      if (!this.loginForm.password) {
         messageWarning('请输入密码')
         return
       }
@@ -166,22 +170,22 @@ export default {
         this.saveUserData(data.data)
         window.location.href = '/'
         this.centerDialogVisible = false
-      } else if(data && data.message_text.includes('failed')){
+      } else if (data && data.message_text.includes('failed')) {
         messageError('登录失败，请检查用户名/密码')
       }
     },
     // 发布
-    write(){
+    write () {
       const url = this.$route.fullPath
       if (url != '/publish') this.$router.push('/publish')
     },
     // 头像选择菜单
-    handleCommand(command) {
+    handleCommand (command) {
       const url = this.$route.fullPath
-      if(command == 'exit'){
+      if (command == 'exit') {
         this.clearUserData()
         window.location.href = '/'
-      } else if(command == 'my') {
+      } else if (command == 'my') {
         if (url == '/my') return
         this.$router.push('/my')
       } else if (command == 'myPublish') {
@@ -190,7 +194,7 @@ export default {
       }
     },
     // 重置表单
-    resetForm(){
+    resetForm () {
       this.$refs['ruleForm1'].resetFields()
     },
     ...mapActions([
@@ -239,7 +243,7 @@ export default {
 .nav-list a:hover {
   color: #007fff;
 }
-.login-form .el-input{
+.login-form .el-input {
   width: 260px;
 }
 .login-form {

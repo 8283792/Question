@@ -11,7 +11,7 @@
 				  :autosize="{ minRows: minRows, maxRows: maxRows}"
 				  :placeholder=placeholder
 				  v-model="textareaMap[0]">
-				</el-input> -->
+        </el-input>-->
 
         <tinymce-editor
           ref="editor"
@@ -21,8 +21,7 @@
           @input="onInput"
           @onClick="onClick"
           @clear="clear"
-        >
-        </tinymce-editor>
+        ></tinymce-editor>
 
         <div class="hbl-owo">
           <!-- <div :class="pBodyMap[0]?'OwO':'OwO OwO-open'" class="emoj publish" :style="{width:emojiWidth}">
@@ -37,7 +36,7 @@
 								</li>
 							</ul>
 						</div>
-					</div> -->
+          </div>-->
 
           <div class="publish publish-btn">
             <button class="btn" @click="doSend()">发送</button>
@@ -47,10 +46,11 @@
       </div>
     </div>
 
-    <div class="comm">
+    <div v-loading="loading" class="comm">
       <div class="su com-rep"></div>
       <div class="com-rep com-title">
-        评论<span class="com-span">({{ commentNum }})</span>
+        评论
+        <span class="com-span">({{ commentNum }})</span>
       </div>
     </div>
 
@@ -58,36 +58,27 @@
       <div class="reply"></div>
       <div class="content">
         <div class="comment-f">
-          <avatar
-            :avatar="item.commentUser.avatar ? item.commentUser.avatar : avatar"
-          ></avatar>
+          <avatar :avatar="item.commentUser.avatar ? item.commentUser.avatar : avatar"></avatar>
         </div>
 
         <div class="comment-f">
           <div>
-            <div class="nickname author">
-              {{ item.commentUser.nickName }}
-            </div>
-            <div v-if="item.commentUser.id === authorId" class="icon author">
-              {{ label }}
-            </div>
-            <div class="date">
-              {{ item.createDate }}
-            </div>
+            <div class="nickname author">{{ item.commentUser.nickName }}</div>
+            <div v-if="item.commentUser.id === authorId" class="icon author">{{ label }}</div>
+            <div class="date">{{ item.createDate }}</div>
           </div>
         </div>
 
-        <div class="reply-content" v-html="analyzeEmoji(item.content)">
-          {{ analyzeEmoji(item.content) }}
-        </div>
+        <div
+          class="reply-content"
+          v-html="analyzeEmoji(item.content)"
+        >{{ analyzeEmoji(item.content) }}</div>
 
         <div class="reply-content reply-fa">
           <div class="reply-font" @click="doReply(item.id)">
             <div>
-              <img
-                :src="baseUrl + '/static/img/icon/reply.png'"
-                class="icon-reply"
-              /><font class="icon-reply icon-hf">回复</font>
+              <img :src="baseUrl + '/static/img/icon/reply.png'" class="icon-reply" />
+              <font class="icon-reply icon-hf">回复</font>
             </div>
           </div>
 
@@ -102,33 +93,34 @@
               :autosize="{ minRows: minRows, maxRows: maxRows }"
               :placeholder="placeholder"
               v-model="textareaMap[item.id]"
-            >
-            </el-input>
+            ></el-input>
 
             <div class="hbl-owo">
-              <div :class="pBodyMap[item.id]?'OwO OwO-open':'OwO'" class="emoj publish" :style="{width:emojiWidth}">
-								<div class="OwO-logo" @click="pBodyStatus(item.id)">
-									<span>Emoji表情</span>
-								</div>
-								<div v-if="pBodyMap[item.id]" class="OwO-body">
-									<ul class="OwO-items OwO-items-show">
-										<li class="OwO-item" v-for="(oitem,index) in OwOlist" :key="'oitem'+index" @click="choseEmoji(item.id,oitem.title)">
-											<img :src="baseUrl + '/static/img/face/'+oitem.url" alt="">
-										</li>
-									</ul>
-								</div>
-							</div>
+              <div
+                :class="pBodyMap[item.id]?'OwO OwO-open':'OwO'"
+                class="emoj publish"
+                :style="{width:emojiWidth}"
+              >
+                <div class="OwO-logo" @click="pBodyStatus(item.id)">
+                  <span>Emoji表情</span>
+                </div>
+                <div v-if="pBodyMap[item.id]" class="OwO-body">
+                  <ul class="OwO-items OwO-items-show">
+                    <li
+                      class="OwO-item"
+                      v-for="(oitem,index) in OwOlist"
+                      :key="'oitem'+index"
+                      @click="choseEmoji(item.id,oitem.title)"
+                    >
+                      <img :src="baseUrl + '/static/img/face/'+oitem.url" alt />
+                    </li>
+                  </ul>
+                </div>
+              </div>
 
               <div class="publish publish-btn">
-                <button
-                  class="btn"
-                  @click="doChidSend(item.id, item.commentUser.id, item.id)"
-                >
-                  发送
-                </button>
-                <button @click="cancel(item.id)" class="btn btn-cancel">
-                  取消
-                </button>
+                <button class="btn" @click="doChidSend(item.id, item.commentUser.id, item.id)">发送</button>
+                <button @click="cancel(item.id)" class="btn btn-cancel">取消</button>
               </div>
             </div>
           </div>
@@ -148,15 +140,9 @@
 
           <div class="comment-f">
             <div>
-              <div class="nickname author">
-                {{ ritem.commentUser.nickName }}
-              </div>
-              <div v-if="ritem.commentUser.id === authorId" class="icon author">
-                {{ label }}
-              </div>
-              <div class="date">
-                {{ ritem.createDate }}
-              </div>
+              <div class="nickname author">{{ ritem.commentUser.nickName }}</div>
+              <div v-if="ritem.commentUser.id === authorId" class="icon author">{{ label }}</div>
+              <div class="date">{{ ritem.createDate }}</div>
             </div>
           </div>
 
@@ -165,18 +151,14 @@
               <a href="#">@{{ ritem.targetUser.nickName }}</a>
             </div>
 
-            <div class="cc" v-html="analyzeEmoji(ritem.content)">
-              {{ analyzeEmoji(ritem.content) }}
-            </div>
+            <div class="cc" v-html="analyzeEmoji(ritem.content)">{{ analyzeEmoji(ritem.content) }}</div>
           </div>
 
           <div class="reply-content reply-fa">
             <div class="reply-font" @click="doReply(ritem.id)">
               <div>
-                <img
-                  :src="baseUrl + '/static/img/icon/reply.png'"
-                  class="icon-reply"
-                /><font class="icon-reply icon-hf">回复</font>
+                <img :src="baseUrl + '/static/img/icon/reply.png'" class="icon-reply" />
+                <font class="icon-reply icon-hf">回复</font>
               </div>
             </div>
 
@@ -191,34 +173,37 @@
                 :autosize="{ minRows: minRows, maxRows: maxRows }"
                 :placeholder="placeholder"
                 v-model="textareaMap[ritem.id]"
-              >
-              </el-input>
+              ></el-input>
 
               <div class="hbl-owo">
-                <div :class="pBodyMap[ritem.id]?'OwO OwO-open':'OwO'" class="emoj publish" :style="{width:emojiWidth}">
-									<div class="OwO-logo" @click="pBodyStatus(ritem.id)">
-											<span>Emoji表情</span>
-									</div>
-									<div v-if="pBodyMap[ritem.id]" class="OwO-body">
-											<ul class="OwO-items OwO-items-show">
-													<li class="OwO-item" v-for="(oitem,index) in OwOlist" :key="'oitem'+index" @click="choseEmoji(ritem.id,oitem.title)">
-															<img :src="baseUrl + '/static/img/face/'+oitem.url" alt="">
-													</li>
-											</ul>
-										
-									</div>
-								</div>
+                <div
+                  :class="pBodyMap[ritem.id]?'OwO OwO-open':'OwO'"
+                  class="emoj publish"
+                  :style="{width:emojiWidth}"
+                >
+                  <div class="OwO-logo" @click="pBodyStatus(ritem.id)">
+                    <span>Emoji表情</span>
+                  </div>
+                  <div v-if="pBodyMap[ritem.id]" class="OwO-body">
+                    <ul class="OwO-items OwO-items-show">
+                      <li
+                        class="OwO-item"
+                        v-for="(oitem,index) in OwOlist"
+                        :key="'oitem'+index"
+                        @click="choseEmoji(ritem.id,oitem.title)"
+                      >
+                        <img :src="baseUrl + '/static/img/face/'+oitem.url" alt />
+                      </li>
+                    </ul>
+                  </div>
+                </div>
 
                 <div class="publish publish-btn">
                   <button
                     class="btn"
                     @click="doChidSend(ritem.id, ritem.commentUser.id, item.id)"
-                  >
-                    发送
-                  </button>
-                  <button @click="cancel(ritem.id)" class="btn btn-cancel">
-                    取消
-                  </button>
+                  >发送</button>
+                  <button @click="cancel(ritem.id)" class="btn btn-cancel">取消</button>
                 </div>
               </div>
             </div>
@@ -314,8 +299,9 @@ export default {
       default: "80%",
     },
   },
-  data() {
+  data () {
     return {
+      loading: true,
       replyMap: [],
       msg: "",
       disabled: false, // 禁用富文本
@@ -406,102 +392,105 @@ export default {
   },
   methods: {
     //事件处理器
-    onInput() {
+    onInput () {
       const length = tinyMCE.activeEditor
         .getContent()
-        .replace(/(<([^>]+)>)/gi, "").length;
+        .replace(/(<([^>]+)>)/gi, "").length
       if (length > 10000) {
         this.$message({
           message: "字符超出限制",
           type: "warning",
-        });
-        this.publishBtn = true;
+        })
+        this.publishBtn = true
       } else {
-        this.publishBtn = false;
+        this.publishBtn = false
       }
     },
     // 鼠标单击的事件
-    onClick(e, editor) {
-      console.log("Element clicked");
-      console.log(e);
-      console.log(editor);
+    onClick (e, editor) {
+      console.log("Element clicked")
+      console.log(e)
+      console.log(editor)
     },
-    showButton(index) {
-      //this.showFlag = true;
+    showButton (index) {
+      //this.showFlag = true
       // debugger
-      console.log(index + "index");
-      this.$set(this.buttonMap, index, true);
+      console.log(index + "index")
+      this.$set(this.buttonMap, index, true)
     },
-    cancel(index) {
-      this.$set(this.buttonMap, index, false);
+    cancel (index) {
+      this.$set(this.buttonMap, index, false)
       if (index !== 0) {
-        this.$set(this.replyMap, index, false);
+        this.$set(this.replyMap, index, false)
       }
-      console.log(index + "index");
-      //this.showFlag = false;
+      console.log(index + "index")
+      //this.showFlag = false
     },
-    clear (){
+    clear () {
       this.$refs.editor.clear()
     },
-    doSend() {
-			this.textareaMap[0] = this.msg
-      //console.log("====="+this.textarea);
-      this.$emit("doSend", this.textareaMap[0]);
-      this.$set(this.textareaMap, 0, "");
+    doSend () {
+      this.textareaMap[0] = this.msg
+      //console.log("====="+this.textarea)
+      this.$emit("doSend", this.textareaMap[0])
+      this.$set(this.textareaMap, 0, "")
     },
-    doChidSend(index, commentUserId, pid) {
-      this.$emit("doChidSend", this.textareaMap[index], commentUserId, pid, index);
-      this.$set(this.textareaMap, index, "");
+    doChidSend (index, commentUserId, pid) {
+      this.$emit("doChidSend", this.textareaMap[index], commentUserId, pid, index)
+      this.$set(this.textareaMap, index, "")
     },
 
     //选择表情包
     choseEmoji: function (index, inner) {
-      var con = "";
+      var con = ""
       if (!this.textareaMap[index]) {
-        this.$set(this.textareaMap, index, "");
+        this.$set(this.textareaMap, index, "")
       }
-      con = this.textareaMap[index] += "[" + inner + "]";
-      this.$set(this.textareaMap, index, con);
+      con = this.textareaMap[index] += "[" + inner + "]"
+      this.$set(this.textareaMap, index, con)
     },
     analyzeEmoji: function (cont) {
       //编译表情替换成图片展示出来
-      var pattern1 = /\[[\u4e00-\u9fa5]+\]/g;
-      var pattern2 = /\[[\u4e00-\u9fa5]+\]/;
-      var content = cont.match(pattern1);
-      var str = cont;
+      var pattern1 = /\[[\u4e00-\u9fa5]+\]/g
+      var pattern2 = /\[[\u4e00-\u9fa5]+\]/
+      var content = cont.match(pattern1)
+      var str = cont
       if (content) {
         for (var i = 0; i < content.length; i++) {
           for (var j = 0; j < this.OwOlist.length; j++) {
             if ("[" + this.OwOlist[j].title + "]" == content[i]) {
-              var src = this.OwOlist[j].url;
+              var src = this.OwOlist[j].url
               break;
             }
           }
           var s = this.baseUrl + "/static/img/face/" + src
-          var imoj = "<img src='" + s + "'/>";
+          var imoj = "<img src='" + s + "'/>"
 
-          str = str.replace(pattern2, imoj);
+          str = str.replace(pattern2, imoj)
         }
       }
-      return str;
+      return str
     },
-    doReply(index) {
-      this.$set(this.replyMap, index, true);
-      console.log(this.replyMap[index]);
+    doReply (index) {
+      this.$set(this.replyMap, index, true)
+      console.log(this.replyMap[index])
     },
 
-    pBodyStatus(index) {
-      this.$set(this.pBodyMap, index, !this.pBodyMap[index]);
+    pBodyStatus (index) {
+      this.$set(this.pBodyMap, index, !this.pBodyMap[index])
     },
   },
   watch: {
     // 如果路由有变化，会再次执行该方法
     // '$route':'routeChange'
+    commentList () {
+      if (this.$props.commentList.length) this.loading = false
+    }
   },
-  created() {
+  created () {
     //生命周期函数
   },
-  mounted() {
+  mounted () {
     //页面加载完成后
   },
 };
@@ -1191,7 +1180,7 @@ export default {
 }
 .content {
   margin-top: 20px;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
 }
 .comment-f {
   display: inline-block;
@@ -1251,6 +1240,6 @@ export default {
   margin-top: 2px;
 }
 .hbl-child {
-  padding: 20px;
+  padding: 2px 20px;
 }
 </style>

@@ -3,11 +3,16 @@
     <div class="main">
       <el-tabs v-model="activeName" class="card-wrapper" type="card">
         <el-tab-pane label="热门" name="first">
-
           <ul v-infinite-scroll="loadList" class="infinite-list list">
-            <li @click="toDetail(item)" class="card infinite-list-item" v-for="item in recentList" :key="item.topic.system_id">
+            <li
+              @click="toDetail(item)"
+              class="card infinite-list-item"
+              v-for="item in recentList"
+              :key="item.topic.system_id"
+            >
               <div class="subtitle">
-                <div>{{item.topic.area}}
+                <div>
+                  {{item.topic.area}}
                   <span v-show="item.author">/</span>
                   {{item.author}}
                 </div>
@@ -32,7 +37,7 @@ import { messageError, messageSuccsess, messageWarning } from '@/utils/elementTo
 import { mixParams } from '@/utils/mixParams'
 
 export default {
-  data: function(){
+  data: function () {
     return {
       recentList: [],
       activeName: 'first',
@@ -40,15 +45,15 @@ export default {
       pageCount: 5
     }
   },
-  mounted(){
+  mounted () {
     // this.loadRecent()
   },
   methods: {
-    loadList(){
+    loadList () {
       this.pageNo += 1
       this.loadRecent()
     },
-    async loadRecent(){
+    async loadRecent () {
       let params = {
         'page_no': this.pageNo,
         'topics_per_page': this.pageCount
@@ -59,11 +64,11 @@ export default {
         data: params,
         method: 'POST'
       })
-      if (data.data && data.data.length) {
+      if (data && data.data && data.data.length) {
         this.recentList = this.recentList.concat(data.data)
       }
     },
-    toDetail(item){
+    toDetail (item) {
       this.$router.push({
         name: 'detail',
         params: {
@@ -108,7 +113,7 @@ export default {
   flex-direction: row;
   font-size: 14px;
 }
-.subtitle div{
+.subtitle div {
   margin: 10px 0px;
 }
 .title {

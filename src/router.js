@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-
 import Home from '@/views/Home'
 import Main from '@/views/Main'
 import BoilingPoint from '@/views/BoilingPoint'
@@ -14,7 +13,6 @@ import Publish from '@/views/Publish'
 import MyPublish from '@/views/MyPublish'
 import Detail from '@/views/Detail'
 
-
 Vue.use(Router)
 
 export default new Router({
@@ -22,8 +20,8 @@ export default new Router({
     {
       path: '/',
       redirect: {
-        name: 'recommend'
-      }
+        name: 'recommend',
+      },
     },
     {
       path: '/main',
@@ -38,19 +36,19 @@ export default new Router({
             {
               path: '/home/recommend',
               name: 'recommend',
-              component: Recommend
+              component: Recommend,
             },
             {
               path: '/home/backEnd',
               name: 'backEnd',
-              component: BackEnd
+              component: BackEnd,
             },
             {
               path: '/home/frontEnd',
               name: 'frontEnd',
-              component: FrontEnd
-            }
-          ]
+              component: FrontEnd,
+            },
+          ],
         },
         {
           path: '/boilingPoint',
@@ -76,13 +74,13 @@ export default new Router({
           path: '/publish',
           name: 'publish',
           component: Publish,
-        }
-      ]
+        },
+      ],
     },
     {
       path: '/register',
       name: 'register',
       component: Register,
-    }
-  ]
+    },
+  ],
 })

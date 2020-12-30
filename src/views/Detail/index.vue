@@ -4,21 +4,23 @@
       <div class="subtitle">
         <div>
           <div v-show="doc.author">
-            <i style="color: #409EFF;" class="el-icon-user-solid"></i> {{doc.author}}
+            <i style="color: #409EFF;" class="el-icon-user-solid"></i>
+            {{doc.author}}
           </div>
           <div v-show="docData.created_on" style="color: #909399;">发表于： {{docData.created_on}}</div>
         </div>
       </div>
       <h1 class="title">{{docData.title}}</h1>
+
+      <el-divider />
+
       <div class="content" v-html="docData.content"></div>
 
       <el-divider />
       <div v-show="doc.area_display_name">
         <div>分类：</div>
         <div class="tag">
-          <el-tag tag="success">
-            {{doc.area_display_name}}
-          </el-tag>
+          <el-tag tag="success">{{doc.area_display_name}}</el-tag>
         </div>
       </div>
       <comment
@@ -42,11 +44,17 @@ import comment from '@/components/Comment'
 import { Http } from '@/utils/http'
 import { messageError, messageSuccsess } from '@/utils/elementTools'
 import { mixParams } from '@/utils/mixParams'
+import { Check } from '@/utils/check'
 
 export default {
-  data() {
+  data () {
     return {
       doc: {},
+      replayConfig: {
+        max_picture_size: 0,
+        max_pictures: 0,
+        max_words: 0
+      },
       commentList: [
         // {
         //   id: 123,
@@ -67,7 +75,7 @@ export default {
     }
   },
   computed: {
-    docData(){
+    docData () {
       const doc = this.$route.params.doc
       return doc ? doc.topic : ''
     },
@@ -75,19 +83,35 @@ export default {
       'user'
     ])
   },
-  mounted(){
+  mounted () {
     this.doc = this.$route.params.doc
     // 关闭聚焦打开表情框
     this.$refs.comment.pBodyMap[0] = true
-    if(this.doc && this.doc.topic && this.doc.topic.system_id){
+    if (this.doc && this.doc.topic && this.doc.topic.system_id) {
+      this.getConfig()
       this.getReply()
     } else {
       window.location.href = '/'
     }
   },
   methods: {
+    // 获取回复配置
+    async getConfig () {
+      const session = localStorage.getItem('_userSess')
+      const params = {
+        authentication: JSON.stringify({
+          system_id: session
+        })
+      }
+      const data = await Http.request({
+        url: '/Community/Reply_Configuration',
+        data: params,
+        method: 'POST'
+      })
+      if (data && data.data) this.replayConfig = data.data
+    },
     // 获取回复列表
-    async getReply(){
+    async getReply () {
       let params = {
         'topic': JSON.stringify({
           // 'system_id': '1f1afdce0d5d4426a46bdeb64c7b39ea'
@@ -101,12 +125,12 @@ export default {
         method: 'POST'
       })
       const res = data.data
-      if(res && res.length){
+      if (res && res.length) {
         this.commentList = res
       }
     },
     // 回复
-    async doSend(content){
+    async doSend (content) {
       const user = this.user
       let params = {
         'reply': JSON.stringify({
@@ -120,6 +144,8 @@ export default {
           'created_on': ''
         })
       }
+      if (!Check.topicText(content, this.max_words)) return
+      if (!Check.topicImg(content)) return
       params = mixParams.mix('Create Reply', params)
       const data = await Http.request({
         url: '/Community/Reply',
@@ -127,7 +153,7 @@ export default {
         method: 'POST'
       })
       const res = data.data
-      if(res){
+      if (res) {
         messageSuccsess('发布成功！')
         this.commentList.push(res)
         this.$refs.comment.clear()
@@ -136,7 +162,7 @@ export default {
       }
     },
     // 楼中楼回复
-    async doChidSend(content,bid,pid, idx){
+    async doChidSend (content, bid, pid, idx) {
       console.log(bid, 'bid')
       const user = this.user
       let params = {
@@ -151,6 +177,8 @@ export default {
           'created_on': ''
         })
       }
+      if (!Check.topicText(content, this.max_words)) return
+      if (!Check.topicImg(content)) return
       params = mixParams.mix('Create Reply', params)
       const data = await Http.request({
         url: '/Community/Reply',
@@ -158,7 +186,7 @@ export default {
         method: 'POST'
       })
       const res = data.data
-      if(res){
+      if (res) {
         const targetMsg = this.commentList.find(item => item.id == pid)
         messageSuccsess('发布成功！')
         targetMsg.childrenList.push(res)
@@ -168,7 +196,7 @@ export default {
       }
     }
   },
-  components:{
+  components: {
     comment
   }
 }
@@ -180,7 +208,7 @@ export default {
 }
 .title {
   text-align: center;
-  margin: .67em 0;
+  margin: 0.67em 0;
   font-size: 2rem;
   font-weight: 700;
   line-height: 1.5;
@@ -193,7 +221,7 @@ export default {
   flex-direction: row;
   font-size: 14px;
 }
-.subtitle div{
+.subtitle div {
   margin: 10px 0px;
 }
 .tag {

@@ -4,45 +4,46 @@
       <el-tabs class="tab-item" v-model="activeName">
         <el-tab-pane label="文章发布" name="publish">
           <b class="title">文章发布</b>
-            <el-divider />
-            <div class="edit-box">
-              <span class="edit-left">标题</span>
-              <span class="edit-right">
-                <input type="text" class="edit-ipt" v-model="document.title" placeholder="请输入标题">
-                <!-- <el-button type="primary" icon="el-icon-edit" size="small">修改</el-button> -->
-              </span>
-            </div>
-            <el-divider />
+          <el-divider />
+          <div class="edit-box">
+            <span class="edit-left">标题</span>
+            <span class="edit-right">
+              <input type="text" class="edit-ipt" v-model="document.title" placeholder="请输入标题" />
+              <!-- <el-button type="primary" icon="el-icon-edit" size="small">修改</el-button> -->
+            </span>
+          </div>
+          <el-divider />
 
-            <div class="edit-box">
-              <span class="edit-left">分类</span>
-              <span class="edit-right">
-                <el-select v-model="document.selectedValue" placeholder="请选择">
-                  <el-option
-                    v-for="item in document.classify"
-                    :key="item.system_id"
-                    :label="item.display_name"
-                    :value="item.name">
-                  </el-option>
-                </el-select>
-              </span>
-            </div>
-            <el-divider />
-            <!-- {{ msg }} -->
-            <tinymce-editor ref="editor"
-              :baseUrl="baseUrl"
-              v-model="msg"
-              :disabled="disabled"
-              @input="onInput"
-              @onClick="onClick">
-            </tinymce-editor>
-            <div class="btn-wrapper">
-              <el-button type="primary" @click="clear">清空</el-button>
-              <el-button type="primary" :disabled="publishBtn" @click="pubilsh">发布</el-button>
-            </div>
+          <div class="edit-box">
+            <span class="edit-left">分类</span>
+            <span class="edit-right">
+              <el-select v-model="document.selectedValue" placeholder="请选择">
+                <el-option
+                  v-for="item in document.classify"
+                  :key="item.system_id"
+                  :label="item.display_name"
+                  :value="item.name"
+                ></el-option>
+              </el-select>
+            </span>
+          </div>
+          <el-divider />
+          <!-- {{ msg }} -->
+          <tinymce-editor
+            ref="editor"
+            :baseUrl="baseUrl"
+            v-model="msg"
+            :disabled="disabled"
+            @input="onInput"
+            @onClick="onClick"
+          ></tinymce-editor>
+          <div class="btn-wrapper">
+            <el-button type="primary" @click="clear">清空</el-button>
+            <el-button type="primary" :disabled="publishBtn" @click="pubilsh">发布</el-button>
+          </div>
         </el-tab-pane>
       </el-tabs>
-      </div>
+    </div>
   </div>
 </template>
 
@@ -59,7 +60,7 @@ export default {
   components: {
     TinymceEditor
   },
-  mounted(){
+  mounted () {
     this.getArea()
   },
   data () {
@@ -100,9 +101,9 @@ export default {
     ])
   },
   methods: {
-    onInput(){
-      const length = tinyMCE.activeEditor.getContent().replace(/(<([^>]+)>)/ig,"").length
-      if(length>this.max_words){
+    onInput () {
+      const length = tinyMCE.activeEditor.getContent().replace(/(<([^>]+)>)/ig, "").length
+      if (length > this.max_words) {
         messageWarning('字符超出限制')
         this.publishBtn = true
       } else {
@@ -120,7 +121,7 @@ export default {
       this.$refs.editor.clear()
     },
     // 获取文章分类
-    async getArea(){
+    async getArea () {
       const params = mixParams.mix('')
       const data = await Http.request({
         url: '/Community/Topic_Configuration',
@@ -132,7 +133,7 @@ export default {
       this.max_words = data.data.max_words
 
     },
-    async pubilsh(){
+    async pubilsh () {
       let params = {
         'topic': JSON.stringify({
           'system_id': '',
@@ -149,12 +150,12 @@ export default {
         })
       }
       params = mixParams.mix('Create Topic', params)
-      if(!this.document.title.length){
+      if (!this.document.title.length) {
         messageWarning('标题不能为空！')
         return
       }
 
-      if(!Check.topicImg(this.msg)) return
+      if (!Check.topicImg(this.msg)) return
       const data = await Http.request({
         url: '/Community/Topic',
         data: params,

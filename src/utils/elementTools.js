@@ -11,5 +11,5 @@ export {
   messageError,
   messageSuccsess,
   messageWarning,
-  loading
+  loading,
 }
