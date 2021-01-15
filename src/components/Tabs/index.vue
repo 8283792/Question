@@ -2,9 +2,13 @@
   <div class="tabs">
     <ul @click="routeTo($event)" class="tabs-wrapper">
       <li>
-        <a :class="routeHash == '#/home/recommend' ? 'nav-active' : ''" href="#/home/recommend">推荐</a>
+        <a
+          :class="routeHash == '#/home/recommend' ? 'nav-active' : ''"
+          href="#/home/recommend"
+          >推荐</a
+        >
       </li>
-      <li>
+      <!-- <li>
         <a :class="routeHash == '#/home/backEnd' ? 'nav-active' : ''" href="#/home/backEnd">后端</a>
       </li>
       <li>
@@ -27,25 +31,25 @@
       </li>
       <li>
         <a :class="routeHash == '#/' ? 'nav-active' : ''" href>阅读</a>
-      </li>
+      </li> -->
     </ul>
   </div>
 </template>
 
 <script>
 export default {
-  data () {
+  data() {
     return {
-      routeHash: '#/home/recommend'
+      routeHash: '#/home/recommend',
     }
   },
   methods: {
-    routeTo ($ev) {
+    routeTo($ev) {
       if ($ev.target.tagName == 'A') {
         this.routeHash = $ev.target.hash
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

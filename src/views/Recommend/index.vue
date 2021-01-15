@@ -2,7 +2,7 @@
   <div class="container wrapper">
     <div class="main">
       <el-tabs v-model="activeName" class="card-wrapper" type="card">
-        <el-tab-pane label="热门" name="first">
+        <el-tab-pane label="热门" name="first" class="tab">
           <ul v-infinite-scroll="loadList" class="infinite-list list">
             <li
               @click="toDetail(item)"
@@ -12,20 +12,21 @@
             >
               <div class="subtitle">
                 <div>
-                  {{item.topic.area}}
+                  {{ item.topic.area }}
                   <span v-show="item.author">/</span>
-                  {{item.author}}
+                  {{ item.author }}
                 </div>
               </div>
               <div class="title">
-                <b>{{item.topic.title}}</b>
+                <b>{{ item.topic.title }}</b>
               </div>
-              <div class="subtitle">发表于 {{item.topic.created_on}}</div>
+              <div class="subtitle">发表于 {{ item.topic.created_on }}</div>
             </li>
           </ul>
         </el-tab-pane>
-        <el-tab-pane label="最新" name="second">最新</el-tab-pane>
-        <el-tab-pane label="热榜" name="third">热榜</el-tab-pane>
+
+        <!-- <el-tab-pane label="最新" name="second">最新</el-tab-pane>
+        <el-tab-pane label="热榜" name="third">热榜</el-tab-pane> -->
       </el-tabs>
     </div>
   </div>
@@ -33,50 +34,54 @@
 
 <script>
 import { Http } from '@/utils/http'
-import { messageError, messageSuccsess, messageWarning } from '@/utils/elementTools'
+import {
+  messageError,
+  messageSuccsess,
+  messageWarning,
+} from '@/utils/elementTools'
 import { mixParams } from '@/utils/mixParams'
 
 export default {
-  data: function () {
+  data: function() {
     return {
       recentList: [],
       activeName: 'first',
       pageNo: 0,
-      pageCount: 5
+      pageCount: 5,
     }
   },
-  mounted () {
+  mounted() {
     // this.loadRecent()
   },
   methods: {
-    loadList () {
+    loadList() {
       this.pageNo += 1
       this.loadRecent()
     },
-    async loadRecent () {
+    async loadRecent() {
       let params = {
-        'page_no': this.pageNo,
-        'topics_per_page': this.pageCount
+        page_no: this.pageNo,
+        topics_per_page: this.pageCount,
       }
       params = mixParams.mix('Get Topics', params)
       const data = await Http.request({
         url: '/Community/Topic',
         data: params,
-        method: 'POST'
+        method: 'POST',
       })
       if (data && data.data && data.data.length) {
         this.recentList = this.recentList.concat(data.data)
       }
     },
-    toDetail (item) {
+    toDetail(item) {
       this.$router.push({
         name: 'detail',
         params: {
-          doc: item
-        }
+          doc: item,
+        },
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -144,5 +149,8 @@ export default {
 }
 .card-wrapper .el-tab-pane {
   padding: 0 14px 12px 14px;
+}
+.tab {
+  margin-top: -18px;
 }
 </style>

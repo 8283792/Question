@@ -10,11 +10,9 @@ import Header from '@/components/Header'
 
 export default {
   components: {
-    Header
-  }
+    Header,
+  },
 }
 </script>
 
-<style lang="css" scoped>
-
-</style>
+<style lang="css" scoped></style>

@@ -5,6 +5,9 @@ module.exports = {
   devServer: {
     open: true
   },
+  css: {
+    extract: false
+  },    
   baseUrl: './',
   outputDir: undefined,
   assetsDir: './',
