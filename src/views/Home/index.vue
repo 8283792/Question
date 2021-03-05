@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Tabs />
+    <!-- <Tabs /> -->
     <router-view></router-view>
   </div>
 </template>
@@ -10,11 +10,9 @@ import Tabs from '@/components/Tabs'
 
 export default {
   components: {
-    Tabs
-  }
+    Tabs,
+  },
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

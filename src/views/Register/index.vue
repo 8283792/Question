@@ -1,6 +1,12 @@
 <template>
   <div>
-    <el-dialog :visible="true" title="注  册" width="410px" :show-close="false" center>
+    <el-dialog
+      :visible="true"
+      title="注  册"
+      width="410px"
+      :show-close="false"
+      center
+    >
       <el-form
         :model="registForm"
         :rules="rules"
@@ -14,9 +20,13 @@
             placement="right"
             width="100"
             trigger="focus"
-            content="8-16位，只允许中英文，数字和_，中文最多8个"
+            :content="userNameRule"
           ></el-popover>
-          <el-input v-popover:userNamePopover v-model="registForm.userName" placeholder="请输入用户名"></el-input>
+          <el-input
+            v-popover:userNamePopover
+            v-model="registForm.userName"
+            placeholder="请输入用户名"
+          ></el-input>
         </el-form-item>
 
         <el-form-item label="密  码：" prop="password">
@@ -25,7 +35,7 @@
             placement="right"
             width="100"
             trigger="focus"
-            content="8-16位，只允许数字，英文，部分特殊字符"
+            :content="passwordRule"
           ></el-popover>
           <el-input
             v-popover:pwdPopover
@@ -37,12 +47,21 @@
 
         <el-form-item label="手机号：" prop="mobile">
           <el-input v-model="registForm.mobile" placeholder="请输入手机号">
-            <el-button @click="subSMS" size="small" slot="append" type="primary">{{SMSText}}</el-button>
+            <el-button
+              @click="subSMS"
+              size="small"
+              slot="append"
+              type="primary"
+              >{{ SMSText }}</el-button
+            >
           </el-input>
         </el-form-item>
 
         <el-form-item v-show="verCodeVisible" label="验证码：" prop="verCode">
-          <el-input v-model="registForm.verCode" placeholder="请输入验证码"></el-input>
+          <el-input
+            v-model="registForm.verCode"
+            placeholder="请输入验证码"
+          ></el-input>
         </el-form-item>
 
         <slide-verify
@@ -59,7 +78,9 @@
         ></slide-verify>
 
         <div class="alert-button-wrapper">
-          <el-button class="submit-button" type="primary" @click="regist()">注 册</el-button>
+          <el-button class="submit-button" type="primary" @click="regist()"
+            >注 册</el-button
+          >
         </div>
       </el-form>
     </el-dialog>
@@ -70,13 +91,17 @@
 import { Http } from '@/utils/http'
 import { Utils } from '@/utils/utils'
 import { Time } from '@/utils/time'
-import { messageError, messageSuccsess, messageWarning } from '@/utils/elementTools'
+import {
+  messageError,
+  messageSuccsess,
+  messageWarning,
+} from '@/utils/elementTools'
 
 export default {
-  data: function () {
+  data: function() {
     const userNameCheck = (rule, value, callback) => {
       setTimeout(async () => {
-        if (await this.checkUserName() == 'yes') {
+        if ((await this.checkUserName()) == 'yes') {
           callback(new Error('用户名已存在，请重新输入'))
         } else {
           callback()
@@ -88,9 +113,8 @@ export default {
       setTimeout(async () => {
         const phone = this.registForm.mobile
         if (!phone) {
-          callback(new Error('请输入手机号'));
-        }
-        else if (!/^[1][3,4,5,7,8][0-9]{9}$/.test(phone)) {
+          callback(new Error('请输入手机号'))
+        } else if (!/^[1][3,4,5,7,8][0-9]{9}$/.test(phone)) {
           callback(new Error('手机号码有误，请重新输入'))
         } else {
           callback()
@@ -99,13 +123,13 @@ export default {
     }
 
     return {
+      userNameRule: '8-16位，只允许中英文，数字和_，中文最多8个',
+      passwordRule: '8-16位，只允许数字，英文，部分特殊字符',
       rules: {
-        userName: [
-          { validator: userNameCheck, trigger: 'blur' }
-        ],
-        mobile: [
-          { validator: mobileCheck, trigger: 'blur' }
-        ],
+        // userName: [
+        //   { validator: userNameCheck, trigger: 'blur' }
+        // ],
+        mobile: [{ validator: mobileCheck, trigger: 'blur' }],
       },
       flag: true,
       userNameTip: false,
@@ -126,16 +150,41 @@ export default {
         age: 0,
         mobile: '',
         email: '',
-        verCode: ''
-      }
+        verCode: '',
+      },
     }
   },
-  mounted () {
+  mounted() {
     document.querySelector('.v-modal').style.zIndex = 111
     this.userNameTip = true
+
+    this.getConfig()
   },
   methods: {
-    regist () {
+    // 获取注册配置
+    async getConfig() {
+      const params = {
+        authorization: JSON.stringify({
+          system_id: this.registForm.system_id,
+          mobile: this.registForm.mobile,
+          sms_pin: this.registForm.verCode,
+          transaction: 'Check Username Password',
+        }),
+      }
+      const data = await Http.request({
+        url: '/Community/Authentication',
+        data: params,
+        method: 'POST',
+      })
+      const res = data.data
+      if (data.message_no == 200 && res) {
+        this.userNameRule = res.username_rule
+        this.passwordRule = res.password_rule
+      } else {
+        messageError('注册配置获取失败')
+      }
+    },
+    regist() {
       if (!this.registForm.userName) {
         messageWarning('请输入用户名')
         return
@@ -156,30 +205,30 @@ export default {
       this.$refs['registForm'].validate(async (valid) => {
         if (valid) {
           const params = {
-            'user': JSON.stringify({
-              'system_id': this.registForm.system_id,
-              'username': this.registForm.userName,
-              'password': this.registForm.password,
-              'user_id': '',
-              'first_name': this.registForm.first_name,
-              'last_name': this.registForm.last_name,
-              'gender': this.registForm.gender,
-              'age': this.registForm.age,
-              'mobile': this.registForm.mobile,
-              'email': this.registForm.email
+            user: JSON.stringify({
+              system_id: this.registForm.system_id,
+              username: this.registForm.userName,
+              password: this.registForm.password,
+              user_id: '',
+              first_name: this.registForm.first_name,
+              last_name: this.registForm.last_name,
+              gender: this.registForm.gender,
+              age: this.registForm.age,
+              mobile: this.registForm.mobile,
+              email: this.registForm.email,
             }),
-            'authorization': JSON.stringify({
-              'system_id': this.registForm.system_id,
-              'mobile': this.registForm.mobile,
-              'sms_pin': this.registForm.verCode,
-              'transaction': 'Create Account'
-            })
+            authorization: JSON.stringify({
+              system_id: this.registForm.system_id,
+              mobile: this.registForm.mobile,
+              sms_pin: this.registForm.verCode,
+              transaction: 'Create Account',
+            }),
           }
 
           const data = await Http.request({
             url: '/Community/User',
             data: params,
-            method: 'POST'
+            method: 'POST',
           })
 
           if (data.data && data.data2 && data.data2.user) {
@@ -192,27 +241,27 @@ export default {
             messageError('登录失败，请检查用户名/密码/验证码')
           }
         } else {
-          console.log('error submit!!');
-          return false;
+          console.log('error submit!!')
+          return false
         }
       })
     },
     // 检查用户名
-    async checkUserName () {
+    async checkUserName() {
       const params = {
         user: Utils.jsonToString({ username: this.registForm.userName }),
-        authorization: Utils.jsonToString({ transaction: 'Check Username' })
+        authorization: Utils.jsonToString({ transaction: 'Check Username' }),
       }
       const data = await Http.request({
         url: '/Community/User',
         data: params,
-        method: 'POST'
+        method: 'POST',
       })
 
       return data.message_text
     },
     // 点击获取验证码
-    subSMS () {
+    subSMS() {
       const mobile = this.registForm.mobile
       if (!mobile) {
         messageWarning('请输入手机号')
@@ -230,49 +279,49 @@ export default {
       }
     },
     // 倒计时
-    countTime () {
+    countTime() {
       new Time(65, this)
     },
     // 验证码成功回调
-    onSuccess () {
+    onSuccess() {
       this.$refs.slideblock.reset()
       this.verCodeVisible = true
       this.verifyVisible = false
       this.sendSms()
     },
-    async sendSms () {
+    async sendSms() {
       const params = {
-        'authorization': JSON.stringify({
-          'system_id': '',
-          'mobile': this.registForm.mobile,
-          'sms_pin': '',
-          'transaction': 'Create Account'
-        })
+        authorization: JSON.stringify({
+          system_id: '',
+          mobile: this.registForm.mobile,
+          sms_pin: '',
+          transaction: 'Create Account',
+        }),
       }
       const data = await Http.request({
         url: '/Community/Authorization',
         data: params,
-        method: 'POST'
+        method: 'POST',
       })
       this.registForm.system_id = data.data.system_id
       messageSuccsess('验证码已经发送，请注意查看手机短信')
     },
-    onFail () {
+    onFail() {
       this.msg = ''
       this.verCodeVisible = false
     },
-    onRefresh () {
+    onRefresh() {
       this.msg = ''
       this.verCodeVisible = false
     },
     // 重置表单
-    resetForm () {
+    resetForm() {
       this.$refs.slideblock.reset()
       this.verifyVisible = false
       this.verCodeVisible = false
       this.$refs['registForm'].resetFields()
-    }
-  }
+    },
+  },
 }
 </script>
 

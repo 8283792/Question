@@ -5,10 +5,10 @@ class mixParams {
    * @param {参数} params
    */
   static mix(transaction, params) {
-    const session = localStorage.getItem('_userSess')
+    const session = localStorage.getItem('_userSess') || ''
     let _params = {
       authentication: JSON.stringify({
-        system_id: session || '',
+        system_id: session,
       }),
       authorization: JSON.stringify({
         system_id: '',

@@ -1,8 +1,8 @@
 <template>
-  <div class="container wrapper">
+  <div class="container">
     <div class="main">
       <el-tabs v-model="activeName" class="card-wrapper" type="card">
-        <el-tab-pane label="热门" name="first" class="tab">
+        <el-tab-pane label="主题" name="first" class="tab">
           <ul v-infinite-scroll="loadList" class="infinite-list list">
             <li
               @click="toDetail(item)"
@@ -10,17 +10,20 @@
               v-for="item in recentList"
               :key="item.topic.system_id"
             >
-              <div class="subtitle">
+              <!-- <div class="subtitle">
                 <div>
                   {{ item.topic.area }}
                   <span v-show="item.author">/</span>
                   {{ item.author }}
                 </div>
+              </div> -->
+              <div class="subtitle">
+                <b style="margin-right: 6px;">{{ item.author }}</b> 发表于
+                {{ item.topic.created_on }}
               </div>
               <div class="title">
                 <b>{{ item.topic.title }}</b>
               </div>
-              <div class="subtitle">发表于 {{ item.topic.created_on }}</div>
             </li>
           </ul>
         </el-tab-pane>
@@ -77,7 +80,7 @@ export default {
       this.$router.push({
         name: 'detail',
         params: {
-          doc: item,
+          topicId: item.topic.system_id,
         },
       })
     },
@@ -94,7 +97,7 @@ export default {
   padding: 0;
 }
 .list {
-  max-height: 650px;
+  max-height: 545px;
   overflow: auto;
   scrollbar-width: none; /* firefox */
   -ms-overflow-style: none; /* IE 10+ */
@@ -117,6 +120,7 @@ export default {
   display: flex;
   flex-direction: row;
   font-size: 14px;
+  margin-top: 6px;
 }
 .subtitle div {
   margin: 10px 0px;
@@ -127,7 +131,7 @@ export default {
   align-items: center;
   font-size: 18px;
   color: #000;
-  margin: 0;
+  margin: 10px 0 0 0;
 }
 .title-box {
   cursor: pointer;

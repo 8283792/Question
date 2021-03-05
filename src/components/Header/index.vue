@@ -2,10 +2,20 @@
   <div class="header">
     <div class="header-container">
       <a href="/">
-        <img src="//s3.pstatp.com/toutiao/xitu_juejin_web/img/logo.a7995ad.svg" alt />
+        <img src="https://sap-experts.pub/static/img/icon/logo.svg" alt />
       </a>
 
-      <ul @click="routeTo($event)" class="nav-list">
+      <el-input
+        placeholder="探索本吧"
+        maxlength="32"
+        v-model="search"
+        class="search"
+        :disabled="true"
+      >
+        <el-button slot="append" icon="el-icon-search"></el-button>
+      </el-input>
+
+      <!-- <ul @click="routeTo($event)" class="nav-list">
         <li>
           <a :class="routeHash == '#/' ? 'nav-active' : ''" href="#/">首页</a>
         </li>
@@ -21,22 +31,37 @@
         <li>
           <a href>活动</a>
         </li>
-      </ul>
+      </ul> -->
 
-      <el-input placeholder="探索掘金" maxlength="32" v-model="search" class="search">
-        <el-button slot="append" icon="el-icon-search"></el-button>
-      </el-input>
+      <el-button
+        v-show="!user.system_id"
+        @click="openLogin"
+        size="small"
+        type="primary"
+        >登&nbsp;录</el-button
+      >
 
-      <el-button v-show="!user.system_id" @click="openLogin" size="small" type="primary">登&nbsp;录</el-button>
+      <el-button
+        v-show="user.system_id"
+        @click="write"
+        size="small"
+        type="primary"
+        >发&nbsp;布</el-button
+      >
 
-      <el-button v-show="user.system_id" @click="write" size="small" type="primary">发&nbsp;布</el-button>
-
-      <el-dropdown v-show="user.system_id" @command="handleCommand">
+      <el-dropdown
+        class="user-avatar"
+        v-show="user.system_id"
+        @command="handleCommand"
+      >
         <span class="el-dropdown-link">
           <a slot="reference">
             <el-avatar
               :size="40"
-              :src="user.user_avatar && user.user_avatar.avatar_small_url || circleUrl"
+              :src="
+                (user.user_avatar && user.user_avatar.avatar_small_url) ||
+                  circleUrl
+              "
             ></el-avatar>
           </a>
         </span>
@@ -54,13 +79,26 @@
         title="登  录"
         center
       >
-        <el-form :model="loginForm" ref="ruleForm1" label-width="22%" class="login-form">
+        <el-form
+          :model="loginForm"
+          ref="ruleForm1"
+          label-width="22%"
+          class="login-form"
+        >
           <el-form-item label="用户名：" prop="userName">
-            <el-input v-model="loginForm.userName" placeholder="请输入用户名"></el-input>
+            <el-input
+              v-model="loginForm.userName"
+              placeholder="请输入用户名"
+            ></el-input>
           </el-form-item>
 
           <el-form-item label="密  码：" prop="password">
-            <el-input v-model="loginForm.password" placeholder="请输入密码" show-password></el-input>
+            <el-input
+              v-model="loginForm.password"
+              placeholder="请输入密码"
+              show-password
+              @keypress.enter.native="login"
+            ></el-input>
           </el-form-item>
 
           <span class="register-link">
@@ -75,7 +113,8 @@
               type="primary"
               :loading="loginBtn.status"
               @click="login('ruleForm1')"
-            >{{loginBtn.text}}</el-button>
+              >{{ loginBtn.text }}</el-button
+            >
           </div>
         </el-form>
       </el-dialog>
@@ -90,46 +129,44 @@ import { mapGetters, mapActions } from 'vuex'
 import { messageError, messageWarning } from '@/utils/elementTools'
 
 export default {
-  data () {
+  data() {
     return {
       routeHash: '#/',
-      circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+      circleUrl:
+        'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
       search: '',
       centerDialogVisible: false,
       loginForm: {
         userName: '',
-        password: ''
+        password: '',
       },
       loginBtn: {
         status: false,
-        text: '登 录'
-      }
+        text: '登 录',
+      },
     }
   },
   computed: {
-    ...mapGetters([
-      'user'
-    ])
+    ...mapGetters(['user']),
   },
-  mounted () {
-  },
+  mounted() {},
   methods: {
-    routeTo ($ev) {
+    routeTo($ev) {
       if ($ev.target.tagName == 'A') {
         this.routeHash = $ev.target.hash
       }
     },
     // 打开登录窗口
-    openLogin () {
+    openLogin() {
       this.centerDialogVisible = true
     },
     // 关闭窗口前执行
-    beforeClose () {
+    beforeClose() {
       this.resetForm()
       this.centerDialogVisible = false
     },
     // 登录
-    async login () {
+    async login() {
       if (!this.loginForm.userName) {
         messageWarning('请输入用户名')
         return
@@ -143,21 +180,21 @@ export default {
       this.loginBtn.text = '登录中...'
 
       const params = {
-        'authentication': JSON.stringify({
-          'username': this.loginForm.userName,
-          'password': this.loginForm.password
+        authentication: JSON.stringify({
+          username: this.loginForm.userName,
+          password: this.loginForm.password,
         }),
-        'authorization': JSON.stringify({
-          'system_id': '',
-          'mobile': '',
-          'sms_pin': '',
-          'transaction': 'Sign In'
-        })
+        authorization: JSON.stringify({
+          system_id: '',
+          mobile: '',
+          sms_pin: '',
+          transaction: 'Sign In',
+        }),
       }
       const data = await Http.request({
         url: '/Community/User',
         data: params,
-        method: 'POST'
+        method: 'POST',
       })
 
       this.loginBtn.status = false
@@ -175,12 +212,12 @@ export default {
       }
     },
     // 发布
-    write () {
+    write() {
       const url = this.$route.fullPath
       if (url != '/publish') this.$router.push('/publish')
     },
     // 头像选择菜单
-    handleCommand (command) {
+    handleCommand(command) {
       const url = this.$route.fullPath
       if (command == 'exit') {
         this.clearUserData()
@@ -194,14 +231,11 @@ export default {
       }
     },
     // 重置表单
-    resetForm () {
+    resetForm() {
       this.$refs['ruleForm1'].resetFields()
     },
-    ...mapActions([
-      'saveUserData',
-      'clearUserData'
-    ])
-  }
+    ...mapActions(['saveUserData', 'clearUserData']),
+  },
 }
 </script>
 
@@ -220,14 +254,18 @@ export default {
   margin: auto;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   background: #fff;
   align-items: center;
 }
 .search {
   width: 228px;
-  margin-left: 100px;
+  /* margin-left: 100px; */
+  margin: 0 484px 0 20px;
   background: #cccccc;
+}
+.user-avatar {
+  margin: 0 0 0 20px;
 }
 .nav-list {
   display: flex;

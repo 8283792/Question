@@ -56,7 +56,7 @@ export default new Router({
           component: BoilingPoint,
         },
         {
-          path: '/detail',
+          path: '/detail/:topicId',
           name: 'detail',
           component: Detail,
         },

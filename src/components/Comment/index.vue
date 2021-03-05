@@ -73,18 +73,54 @@
           </div>
         </div>
 
-        <div class="reply-content" v-html="analyzeEmoji(item.content)">
+        <!-- 第一级回复编辑 -->
+        <div>
+          <tinymce-editor
+            v-show="editMap[item.id]"
+            :baseUrl="baseUrl"
+            v-model="item.content"
+            :disabled="disabled"
+            @input="onInput"
+            @onClick="onClick"
+            @clear="clear"
+          ></tinymce-editor>
+
+          <div v-show="editMap[item.id]" class="publish publish-btn">
+            <button class="btn" @click="doUpdate(item)">
+              发送
+            </button>
+            <button @click="cancelEdit(item)" class="btn btn-cancel">
+              取消
+            </button>
+          </div>
+        </div>
+
+        <div
+          v-show="!editMap[item.id]"
+          class="reply-content"
+          v-html="analyzeEmoji(item.content)"
+        >
           {{ analyzeEmoji(item.content) }}
         </div>
 
-        <div class="reply-content reply-fa">
-          <div class="reply-font">
-            <a @click="doReply(item.id)">
-              <img
+        <div v-show="!editMap[item.id]" class="reply-content reply-fa">
+          <div v-show="!replyMap[item.id]" class="reply-font">
+            <a @click="doReply(item.id)" class="icon-delete">
+              <!-- <img
                 :src="baseUrl + '/static/img/icon/reply.png'"
                 class="icon-reply"
-              />
+              /> -->
+              <i class="el-icon-chat-line-round"></i>
               <font class="icon-reply icon-hf">回复</font>
+            </a>
+
+            <a
+              v-show="item.commentUser.id == user.system_id"
+              @click="doEdit(item)"
+              class="icon-delete"
+            >
+              <i class="el-icon-edit"></i>
+              <font class="icon-reply icon-hf">编辑</font>
             </a>
 
             <a
@@ -139,7 +175,7 @@
               <div class="publish publish-btn">
                 <button
                   class="btn"
-                  @click="doChidSend(item.id, item.commentUser.id, item.id)"
+                  @click="doSend(item.id, item.commentUser.id, item.id)"
                 >
                   发送
                 </button>
@@ -179,7 +215,34 @@
             </div>
           </div>
 
-          <div class="reply-content">
+          <!-- 第二级回复编辑 -->
+          <div>
+            <tinymce-editor
+              v-show="editMap[ritem.id]"
+              :baseUrl="baseUrl"
+              v-model="ritem.content"
+              :disabled="disabled"
+              @input="onInput"
+              @onClick="onClick"
+              @clear="clear"
+            ></tinymce-editor>
+
+            <div v-show="editMap[ritem.id]" class="publish publish-btn">
+              <button
+                class="btn"
+                @click="
+                  doChildUpdate(ritem, ritem.id, ritem.commentUser.id, item.id)
+                "
+              >
+                发送
+              </button>
+              <button @click="cancelEdit(ritem)" class="btn btn-cancel">
+                取消
+              </button>
+            </div>
+          </div>
+
+          <div v-show="!editMap[ritem.id]" class="reply-content">
             <div class="cc cc-to">
               <a href="#">@{{ ritem.targetUser.nickName }}</a>
             </div>
@@ -189,20 +252,30 @@
             </div>
           </div>
 
-          <div class="reply-content reply-fa">
-            <div class="reply-font">
-              <a @click="doReply(ritem.id)">
-                <img
+          <div class="reply-content reply-fa" v-show="!editMap[ritem.id]">
+            <div v-show="!replyMap[ritem.id]" class="reply-font">
+              <a @click="doReply(ritem.id)" class="icon-delete">
+                <!-- <img
                   :src="baseUrl + '/static/img/icon/reply.png'"
                   class="icon-reply"
-                />
+                /> -->
+                <i class="el-icon-chat-line-round"></i>
                 <font class="icon-reply icon-hf">回复</font>
               </a>
 
               <a
                 v-show="item.commentUser.id == user.system_id"
+                @click="doEdit(ritem)"
                 class="icon-delete"
-                @click="doDelete(item.id)"
+              >
+                <i class="el-icon-edit"></i>
+                <font class="icon-reply icon-hf">编辑</font>
+              </a>
+
+              <a
+                v-show="item.commentUser.id == user.system_id"
+                class="icon-delete"
+                @click="doDelete(item.id, ritem.id)"
               >
                 <i class="el-icon-delete"></i>
                 <font class="icon-reply icon-hf">删除</font>
@@ -277,6 +350,8 @@ import {
   messageWarning,
   confirmMessage,
 } from '@/utils/elementTools'
+import { Http } from '@/utils/http'
+import { mixParams } from '@/utils/mixParams'
 
 export default {
   props: {
@@ -365,9 +440,10 @@ export default {
     return {
       loading: true,
       replyMap: [],
+      editMap: [],
       msg: '',
       disabled: false, // 禁用富文本
-
+      temp: '',
       buttonMap: [],
       pBodyMap: [],
       textareaMap: [],
@@ -488,6 +564,16 @@ export default {
       console.log(index + 'index')
       //this.showFlag = false
     },
+    cancelEdit(reply) {
+      reply.content = this.temp
+      this.closeEdit(reply)
+    },
+    closeEdit(reply) {
+      const index = reply.id
+      if (index !== 0) {
+        this.$set(this.editMap, index, false)
+      }
+    },
     clear() {
       this.$refs.editor.clear()
     },
@@ -506,6 +592,12 @@ export default {
         index
       )
       this.$set(this.textareaMap, index, '')
+    },
+    doUpdate(reply) {
+      this.$emit('doUpdate', reply, this)
+    },
+    doChildUpdate(reply, index, commentUserId, pid) {
+      this.$emit('doChildUpdate', reply, commentUserId, pid, index, this)
     },
 
     //选择表情包
@@ -547,22 +639,53 @@ export default {
     pBodyStatus(index) {
       this.$set(this.pBodyMap, index, !this.pBodyMap[index])
     },
-    doDelete(itemId) {
-      confirmMessage('是否永久删除此条回复?', '警告', {
+    // 编辑
+    doEdit(item) {
+      this.temp = item.content
+      this.$set(this.editMap, item.id, true)
+    },
+    doDelete(itemId, childId) {
+      const msg = childId ? '是否永久删除此条及子回复?' : '是否永久删除此条回复'
+      confirmMessage(msg, '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
-      }).then(() => {
-        messageSuccsess('删除成功')
-        console.log(itemId)
       })
+        .then(async () => {
+          let params = {
+            reply: JSON.stringify({
+              system_id: childId ? childId : itemId,
+            }),
+          }
+
+          params = mixParams.mix('Delete Reply', params)
+          const data = await Http.request({
+            url: '/Community/Reply',
+            data: params,
+            method: 'POST',
+          })
+          if (data) {
+            const idx = this.commentList.findIndex((item) => item.id == itemId)
+            if (childId) {
+              const childrenList = this.commentList[idx].childrenList
+              const childIdx = childrenList.findIndex(
+                (item) => item.id == childId
+              )
+              childrenList.splice(childIdx, 1)
+            } else {
+              this.commentList.splice(idx, 1)
+            }
+            messageSuccsess('删除成功')
+          }
+        })
+        .catch(() => {})
     },
   },
   watch: {
     // 如果路由有变化，会再次执行该方法
     // '$route':'routeChange'
     commentList() {
-      if (this.$props.commentList.length) this.loading = false
+      this.loading = false
     },
   },
   created() {
@@ -1290,8 +1413,11 @@ export default {
   word-wrap: break-word;
   width: 90%;
   font-size: 15px;
-  line-height: 25px;
+  line-height: initial;
   margin-left: 56px;
+}
+.reply-content >>> p {
+  overflow: auto;
 }
 
 .reply-fa {
@@ -1324,7 +1450,7 @@ export default {
 }
 .icon-delete {
   font-size: 16px;
-  margin-left: 12px;
+  margin-right: 12px;
 }
 .icon-delete i {
   font-size: 18px;

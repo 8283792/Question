@@ -2,6 +2,7 @@ import axios from 'axios'
 import { apiConfig } from '@/config/apiConfig'
 import { axiosConfig } from '@/config/axiosConfig'
 import { messageError, loading } from '@/utils/elementTools'
+import { clearUser } from '../common/cache/cache'
 
 class Http {
   static async request({ url, data, method = 'GET' }) {
@@ -30,12 +31,34 @@ class Http {
 
     return await axios(_config)
       .then((res) => {
-        if (res.data.message_no == 100) {
-          messageError('用户认证信息错误，请重新登录')
-          return
-        }
+        const rescCode = res.data.message_no
         if (this._loading) this._loading.close()
-        return res.data
+        switch (rescCode) {
+          case 101:
+            messageError('认证信息错误，请重新登录')
+            clearUser()
+          case 100:
+            messageError('验证失败，请重试')
+            return
+          case 200:
+            return res.data
+          default:
+            return null
+        }
+        // if (rescCode == 101) {
+        //   messageError('认证信息错误，请重新登录')
+        //   localStorage.clear()
+        //   return
+        // }
+        // if (rescCode == 100) {
+        //   messageError('数据出错，请重试')
+        //   return
+        // }
+        // if (rescCode == 200) {
+        //   return res.data
+        // }
+        // if (this._loading) this._loading.close()
+        // return null
       })
       .catch((e) => {
         messageError('网络通信异常')

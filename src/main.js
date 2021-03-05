@@ -26,64 +26,66 @@ import { apiConfig } from './config/apiConfig'
 import router from './router'
 import store from './store'
 import SlideVerify from 'vue-monoplasty-slide-verify'
-import {
-  Button,
-  Dialog,
-  Radio,
-  Form,
-  FormItem,
-  Popover,
-  Input,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
-  Tabs,
-  TabPane,
-  Avatar,
-  Divider,
-  Upload,
-  RadioGroup,
-  Message,
-  DatePicker,
-  Select,
-  Option,
-  InfiniteScroll,
-  Tag,
-  Loading,
-  MessageBox,
-} from 'element-ui'
+// import {
+//   Button,
+//   Dialog,
+//   Radio,
+//   Form,
+//   FormItem,
+//   Popover,
+//   Input,
+//   Dropdown,
+//   DropdownMenu,
+//   DropdownItem,
+//   Tabs,
+//   TabPane,
+//   Avatar,
+//   Divider,
+//   Upload,
+//   RadioGroup,
+//   Message,
+//   DatePicker,
+//   Select,
+//   Option,
+//   InfiniteScroll,
+//   Tag,
+//   Loading,
+//   MessageBox,
+//   Backtop,
+// } from 'element-ui'
 
 // Vue.use(ElementUI)
 Vue.use(SlideVerify)
-Vue.use(Button)
-Vue.use(Dialog)
-Vue.use(Radio)
-Vue.use(Form)
-Vue.use(FormItem)
-Vue.use(Popover)
-Vue.use(Input)
-Vue.use(Dropdown)
-Vue.use(DropdownMenu)
-Vue.use(DropdownItem)
-Vue.use(Tabs)
-Vue.use(TabPane)
-Vue.use(Avatar)
-Vue.use(Divider)
-Vue.use(Upload)
-Vue.use(RadioGroup)
-Vue.use(DatePicker)
-Vue.use(Select)
-Vue.use(Option)
-Vue.use(InfiniteScroll)
-Vue.use(Tag)
-Vue.use(Loading.directive)
+// Vue.use(Button)
+// Vue.use(Dialog)
+// Vue.use(Radio)
+// Vue.use(Form)
+// Vue.use(FormItem)
+// Vue.use(Popover)
+// Vue.use(Input)
+// Vue.use(Dropdown)
+// Vue.use(DropdownMenu)
+// Vue.use(DropdownItem)
+// Vue.use(Tabs)
+// Vue.use(TabPane)
+// Vue.use(Avatar)
+// Vue.use(Divider)
+// Vue.use(Upload)
+// Vue.use(RadioGroup)
+// Vue.use(DatePicker)
+// Vue.use(Select)
+// Vue.use(Option)
+// Vue.use(Backtop)
+// Vue.use(InfiniteScroll)
+// Vue.use(Tag)
+// Vue.use(Loading.directive)
 
-Vue.prototype.$message = Message
-Vue.prototype.$msgbox = MessageBox
-Vue.prototype.$alert = MessageBox.alert
-Vue.prototype.$confirm = MessageBox.confirm
-Vue.prototype.$prompt = MessageBox.prompt
-Vue.prototype.$loading = Loading.service
+// Vue.prototype.$message = Message
+// Vue.prototype.$msgbox = MessageBox
+// Vue.prototype.$alert = MessageBox.alert
+// Vue.prototype.$confirm = MessageBox.confirm
+// Vue.prototype.$prompt = MessageBox.prompt
+// Vue.prototype.$loading = Loading.service
 
 Vue.prototype.baseUrl = apiConfig.apiBaseUrl
 

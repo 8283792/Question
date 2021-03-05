@@ -8,8 +8,13 @@
           <div class="edit-box">
             <span class="edit-left">头像</span>
             <span class="edit-right">
-              <img class="avator" @click="handlePictureCardPreview" :src="user.user_avatar && user.user_avatar.avatar_small_url" alt="">
-              
+              <img
+                class="avator"
+                @click="handlePictureCardPreview"
+                :src="user.user_avatar && user.user_avatar.avatar_small_url"
+                alt=""
+              />
+
               <span class="edit-desc">
                 仅支持jpg和png格式，大小500K以内的图片
                 <el-upload
@@ -18,11 +23,17 @@
                   :http-request="httpUpload"
                   :before-upload="beforeUpload"
                 >
-                  <el-button class="upload" size="small" type="primary">点击上传</el-button>
+                  <el-button class="upload" size="small" type="primary"
+                    >点击上传</el-button
+                  >
                 </el-upload>
 
                 <el-dialog :visible.sync="dialogVisible">
-                  <img width="100%" :src="user.user_avatar && user.user_avatar.avatar_url" alt="">
+                  <img
+                    width="100%"
+                    :src="user.user_avatar && user.user_avatar.avatar_url"
+                    alt=""
+                  />
                 </el-dialog>
               </span>
             </span>
@@ -33,7 +44,13 @@
           <div class="edit-box">
             <span class="edit-left">用户名</span>
             <span class="edit-right">
-              <input type="text" class="edit-ipt" v-model="user.username" readonly placeholder="请输入用户名">
+              <input
+                type="text"
+                class="edit-ipt"
+                v-model="user.username"
+                readonly
+                placeholder="请输入用户名"
+              />
               <!-- <el-button type="primary" icon="el-icon-edit" size="small">修改</el-button> -->
             </span>
           </div>
@@ -85,9 +102,15 @@
             <span class="edit-right">
               <el-radio-group class="edit-ipt" v-model="user.gender">
                 <el-radio label="male">男</el-radio>
-                <el-radio label=female>女</el-radio>
+                <el-radio label="female">女</el-radio>
               </el-radio-group>
-              <el-button type="primary" icon="el-icon-edit" @click="update('gender')" size="small">修改</el-button>
+              <el-button
+                type="primary"
+                icon="el-icon-edit"
+                @click="update('gender')"
+                size="small"
+                >修改</el-button
+              >
             </span>
           </div>
 
@@ -102,13 +125,18 @@
                 v-model="user.dob"
                 size="small"
                 type="date"
-                value-format="yyyy-MM-dd">
+                value-format="yyyy-MM-dd"
+              >
               </el-date-picker>
-              <el-button type="primary" icon="el-icon-edit" @click="update('dob')" size="small">修改</el-button>
+              <el-button
+                type="primary"
+                icon="el-icon-edit"
+                @click="update('dob')"
+                size="small"
+                >修改</el-button
+              >
             </span>
           </div>
-
-
         </el-tab-pane>
         <el-tab-pane label="账号安全" name="account">
           <b class="title">账号安全</b>
@@ -117,7 +145,13 @@
           <div class="edit-box">
             <span class="edit-left">手机</span>
             <span class="edit-right">
-              <input type="text" class="edit-ipt" v-model="user.mobile" readonly placeholder="请输入手机号">
+              <input
+                type="text"
+                class="edit-ipt"
+                v-model="user.mobile"
+                readonly
+                placeholder="请输入手机号"
+              />
               <!-- <el-button type="primary" icon="el-icon-edit" size="small">修改</el-button> -->
             </span>
           </div>
@@ -127,7 +161,13 @@
           <div class="edit-box">
             <span class="edit-left">邮箱</span>
             <span class="edit-right">
-              <input type="text" class="edit-ipt" v-model="user.email" readonly placeholder="">
+              <input
+                type="text"
+                class="edit-ipt"
+                v-model="user.email"
+                readonly
+                placeholder=""
+              />
               <!-- <el-button type="primary" icon="el-icon-edit" size="small">修改</el-button> -->
             </span>
           </div>
@@ -141,43 +181,45 @@
 import { Http } from '@/utils/http'
 import { Utils } from '@/utils/utils'
 import { mapGetters, mapActions } from 'vuex'
-import { messageError, messageSuccsess, messageWarning } from '@/utils/elementTools'
+import {
+  messageError,
+  messageSuccsess,
+  messageWarning,
+} from '@/utils/elementTools'
 import { mixParams } from '@/utils/mixParams'
 
 export default {
   data() {
     return {
       dialogVisible: false,
-      activeName: 'my'
+      activeName: 'my',
     }
   },
   computed: {
-    ...mapGetters([
-      'user'
-    ])
+    ...mapGetters(['user']),
   },
-  mounted () {
+  mounted() {
     if (!window.FileReader) {
       console.error('Your browser does not support FileReader API!')
     }
     this.fileReader = new FileReader()
   },
   methods: {
-    async update(key){
-      if(!key || !this.user.system_id) return
+    async update(key) {
+      if (!key || !this.user.system_id) return
       const user = JSON.parse(localStorage.getItem('_user'))
       user[key] = this.user[key]
 
       let params = {
-        'user': JSON.stringify(user)
+        user: JSON.stringify(user),
       }
       params = mixParams.mix('Update User Info', params)
       const data = await Http.request({
         url: '/Community/User',
         data: params,
-        method: 'POST'
+        method: 'POST',
       })
-      if(data.data && data.data.system_id){
+      if (data.data && data.data.system_id) {
         // localStorage.setItem('_user', JSON.stringify(data.data))
         this.saveUserData(data.data)
         messageSuccsess('修改成功')
@@ -185,7 +227,7 @@ export default {
         messageError(`修改失败, ${data.message}`)
       }
     },
-    httpUpload(options){
+    httpUpload(options) {
       if (!this.user.system_id) return
       let file = options.file
       let filename = file.name
@@ -196,13 +238,13 @@ export default {
       this.fileReader.onload = async () => {
         let base64Str = this.fileReader.result
         const user = JSON.parse(localStorage.getItem('_user'))
-        
+
         let params = {
-          'user_avatar': JSON.stringify({
-            'system_id': user.user_avatar ? user.user_avatar.system_id : '',
-            'user': user.system_id,
-            'avatar': base64Str
-          })
+          user_avatar: JSON.stringify({
+            system_id: user.user_avatar ? user.user_avatar.system_id : '',
+            user: user.system_id,
+            avatar: base64Str,
+          }),
         }
         params = mixParams.mix('Update User Avatar', params)
 
@@ -211,10 +253,10 @@ export default {
         const data = await Http.request({
           url: options.action,
           data: params,
-          method: 'POST'
+          method: 'POST',
         })
 
-        if(data.message_no == 100){
+        if (data.message_no == 100) {
           messageError('您长时间未操作，请重新登录')
           // this.clearUserData()
           // this.$router.push('/')
@@ -253,11 +295,11 @@ export default {
       // this.dialogImageUrl = this.target.currentSrc
       this.dialogVisible = true
     },
-    beforeUpload (file) {
+    beforeUpload(file) {
       const isLt5M = file.size < 500 * 1024
       const type = file.type
 
-      if(type != 'image/png' && type != 'image/jpeg' && type != 'image/jpg'){
+      if (type != 'image/png' && type != 'image/jpeg' && type != 'image/jpg') {
         messageError('仅支持 jpg、png、jpeg 格式的图片')
         return false
       }
@@ -266,17 +308,14 @@ export default {
         return false
       }
     },
-    uploadSuccess (res, file, fileList) {
+    uploadSuccess(res, file, fileList) {
       let data = res.data
       console.log('upload result:', res, file)
       file.key = data.key
       this.fileList.push(data.key)
     },
-    ...mapActions([
-      'saveUserData',
-      'clearUserData'
-    ])
-  }
+    ...mapActions(['saveUserData', 'clearUserData']),
+  },
 }
 </script>
 
@@ -304,9 +343,8 @@ export default {
 .el-divider--horizontal {
   margin: 18px 0;
 }
-.date-ipt>>>input {
+.date-ipt >>> input {
   color: #9c9c9c;
   border: none;
 }
-
 </style>
