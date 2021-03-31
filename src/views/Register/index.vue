@@ -14,7 +14,7 @@
         label-width="22%"
         class="login-form"
       >
-        <el-form-item label="用户名：" prop="userName">
+        <el-form-item label="用户名" prop="userName">
           <el-popover
             ref="userNamePopover"
             placement="right"
@@ -29,7 +29,7 @@
           ></el-input>
         </el-form-item>
 
-        <el-form-item label="密  码：" prop="password">
+        <el-form-item label="密  码" prop="password">
           <el-popover
             ref="pwdPopover"
             placement="right"
@@ -45,9 +45,28 @@
           ></el-input>
         </el-form-item>
 
-        <el-form-item label="手机号：" prop="mobile">
+        <el-form-item label="性别">
+          <el-popover
+            ref="genderPopover"
+            placement="right"
+            width="100"
+            trigger="focus"
+            content="注册后性别无法修改"
+          ></el-popover>
+          <el-radio-group v-model="registForm.gender" v-popover:genderPopover>
+            <el-radio label="male">男</el-radio>
+            <el-radio label="female">女</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+        <el-form-item
+          label="手机号"
+          prop="mobile"
+          :class="flag ? 'sms-form' : ''"
+        >
           <el-input v-model="registForm.mobile" placeholder="请输入手机号">
             <el-button
+              class="sendBtn"
               @click="subSMS"
               size="small"
               slot="append"
@@ -57,7 +76,7 @@
           </el-input>
         </el-form-item>
 
-        <el-form-item v-show="verCodeVisible" label="验证码：" prop="verCode">
+        <el-form-item v-show="verCodeVisible" label="验证码" prop="verCode">
           <el-input
             v-model="registForm.verCode"
             placeholder="请输入验证码"
@@ -146,7 +165,7 @@ export default {
         first_name: '',
         last_name: '',
         male: '',
-        gender: '',
+        gender: 'male',
         age: 0,
         mobile: '',
         email: '',
@@ -232,7 +251,7 @@ export default {
           })
 
           if (data.data && data.data2 && data.data2.user) {
-            localStorage.setItem('_userSess', data.data2.user)
+            localStorage.setItem('_userSess', data.data2.system_id)
             localStorage.setItem('_user', Utils.jsonToString(data.data))
             this.resetForm()
             this.centerDialogVisible = false
@@ -326,6 +345,9 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.submit-button {
+  width: 100%;
+}
 .slide-verify {
   left: 24px;
 }
@@ -337,4 +359,13 @@ export default {
   justify-content: center;
   margin-top: 20px;
 }
+.sms-form >>> .el-input-group__append {
+  background-color: coral;
+  color: #fff;
+}
+/* .sendBtn {
+  border-color: rgb(251, 255, 0) !important;
+  background-color: rgb(251, 255, 0) !important;
+  color: #000 !important;
+} */
 </style>

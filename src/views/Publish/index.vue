@@ -194,4 +194,16 @@ export default {
   margin: 20px auto;
   text-align: center;
 }
+::v-deep input::-webkit-input-placeholder {
+  color: #ccc;
+  font-size: 14px;
+}
+::v-deep input::-moz-input-placeholder {
+  color: #ccc;
+  font-size: 14px;
+}
+::v-deep input::-ms-input-placeholder {
+  color: #ccc;
+  font-size: 14px;
+}
 </style>

@@ -105,7 +105,11 @@
 
         <div v-show="!editMap[item.id]" class="reply-content reply-fa">
           <div v-show="!replyMap[item.id]" class="reply-font">
-            <a @click="doReply(item.id)" class="icon-delete">
+            <a
+              v-show="user.system_id"
+              @click="doReply(item.id)"
+              class="icon-delete"
+            >
               <!-- <img
                 :src="baseUrl + '/static/img/icon/reply.png'"
                 class="icon-reply"
@@ -153,7 +157,7 @@
                 :style="{ width: emojiWidth }"
               >
                 <div class="OwO-logo" @click="pBodyStatus(item.id)">
-                  <span>Emoji表情</span>
+                  <span>表情</span>
                 </div>
                 <div v-if="pBodyMap[item.id]" class="OwO-body">
                   <ul class="OwO-items OwO-items-show">
@@ -175,7 +179,7 @@
               <div class="publish publish-btn">
                 <button
                   class="btn"
-                  @click="doSend(item.id, item.commentUser.id, item.id)"
+                  @click="doChidSend(item.id, item.commentUser.id, item.id)"
                 >
                   发送
                 </button>
@@ -244,7 +248,7 @@
 
           <div v-show="!editMap[ritem.id]" class="reply-content">
             <div class="cc cc-to">
-              <a href="#">@{{ ritem.targetUser.nickName }}</a>
+              <a href="#">@{{ ritem.quotedUser.nickName }}</a>
             </div>
 
             <div class="cc" v-html="analyzeEmoji(ritem.content)">
@@ -254,7 +258,11 @@
 
           <div class="reply-content reply-fa" v-show="!editMap[ritem.id]">
             <div v-show="!replyMap[ritem.id]" class="reply-font">
-              <a @click="doReply(ritem.id)" class="icon-delete">
+              <a
+                v-show="user.system_id"
+                @click="doReply(ritem.id)"
+                class="icon-delete"
+              >
                 <!-- <img
                   :src="baseUrl + '/static/img/icon/reply.png'"
                   class="icon-reply"
@@ -264,7 +272,7 @@
               </a>
 
               <a
-                v-show="item.commentUser.id == user.system_id"
+                v-show="ritem.commentUser.id == user.system_id"
                 @click="doEdit(ritem)"
                 class="icon-delete"
               >
@@ -273,7 +281,7 @@
               </a>
 
               <a
-                v-show="item.commentUser.id == user.system_id"
+                v-show="ritem.commentUser.id == user.system_id"
                 class="icon-delete"
                 @click="doDelete(item.id, ritem.id)"
               >
@@ -302,7 +310,7 @@
                   :style="{ width: emojiWidth }"
                 >
                   <div class="OwO-logo" @click="pBodyStatus(ritem.id)">
-                    <span>Emoji表情</span>
+                    <span>表情</span>
                   </div>
                   <div v-if="pBodyMap[ritem.id]" class="OwO-body">
                     <ul class="OwO-items OwO-items-show">
@@ -560,6 +568,7 @@ export default {
       this.$set(this.buttonMap, index, false)
       if (index !== 0) {
         this.$set(this.replyMap, index, false)
+        this.$set(this.pBodyMap, index, false)
       }
       console.log(index + 'index')
       //this.showFlag = false
@@ -645,7 +654,7 @@ export default {
       this.$set(this.editMap, item.id, true)
     },
     doDelete(itemId, childId) {
-      const msg = childId ? '是否永久删除此条及子回复?' : '是否永久删除此条回复'
+      const msg = childId ? '是否删除此条及子回复?' : '是否删除此条回复'
       confirmMessage(msg, '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

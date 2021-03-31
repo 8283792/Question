@@ -18,12 +18,12 @@
                   {{ item.author }}
                 </div>
               </div> -->
+              <div class="title">
+                <h2>{{ item.topic.title }}</h2>
+              </div>
               <div class="subtitle">
                 <b style="margin-right: 6px;">{{ item.author }}</b> 发表于
                 {{ item.topic.created_on }}
-              </div>
-              <div class="title">
-                <b>{{ item.topic.title }}</b>
               </div>
               <!-- <div class="subtitle">发表于 {{ item.topic.created_on }}</div> -->
             </li>
@@ -119,7 +119,7 @@ export default {
   align-items: center;
   font-size: 18px;
   color: #000;
-  margin: 10px 0 0 0;
+  margin: 18px 0 48px 0;
 }
 .title-box {
   cursor: pointer;

@@ -52,6 +52,7 @@ import SlideVerify from 'vue-monoplasty-slide-verify'
 //   Loading,
 //   MessageBox,
 //   Backtop,
+//   Card,
 // } from 'element-ui'
 
 // Vue.use(ElementUI)
@@ -76,6 +77,7 @@ Vue.use(SlideVerify)
 // Vue.use(Select)
 // Vue.use(Option)
 // Vue.use(Backtop)
+// Vue.use(Card)
 // Vue.use(InfiniteScroll)
 // Vue.use(Tag)
 // Vue.use(Loading.directive)

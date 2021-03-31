@@ -1,5 +1,8 @@
 <template>
   <div class="container">
+    <el-card v-if="notice" class="box-card">
+      <div v-html="notice"></div
+    ></el-card>
     <div class="main">
       <el-tabs v-model="activeName" class="card-wrapper" type="card">
         <el-tab-pane label="主题" name="first" class="tab">
@@ -17,12 +20,12 @@
                   {{ item.author }}
                 </div>
               </div> -->
+              <div class="title">
+                <h2>{{ item.topic.title }}</h2>
+              </div>
               <div class="subtitle">
                 <b style="margin-right: 6px;">{{ item.author }}</b> 发表于
                 {{ item.topic.created_on }}
-              </div>
-              <div class="title">
-                <b>{{ item.topic.title }}</b>
               </div>
             </li>
           </ul>
@@ -32,6 +35,12 @@
         <el-tab-pane label="热榜" name="third">热榜</el-tab-pane> -->
       </el-tabs>
     </div>
+
+    <footer class="footer">
+      ©&nbsp;2021 SAP专家吧
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;互联网ICP备案：沪ICP备2020032135号-1
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;联系管理员：QQ 283273794
+    </footer>
   </div>
 </template>
 
@@ -51,12 +60,24 @@ export default {
       activeName: 'first',
       pageNo: 0,
       pageCount: 5,
+      notice: '',
     }
   },
   mounted() {
-    // this.loadRecent()
+    this.getConfig()
   },
   methods: {
+    async getConfig() {
+      const params = mixParams.mix('Get Community Config')
+      const data = await Http.request({
+        url: '/Community/Community_Config',
+        data: params,
+        method: 'POST',
+      })
+      if (data && data.data) {
+        this.notice = data.data.notice
+      }
+    },
     loadList() {
       this.pageNo += 1
       this.loadRecent()
@@ -129,9 +150,9 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 18px;
+  font-size: 16px;
   color: #000;
-  margin: 10px 0 0 0;
+  margin: 18px 0 12px 0;
 }
 .title-box {
   cursor: pointer;
@@ -156,5 +177,18 @@ export default {
 }
 .tab {
   margin-top: -18px;
+}
+.box-card {
+  width: 960px;
+  margin: 0 auto;
+}
+.footer {
+  background: #f4f5f5;
+  max-width: 960px;
+  text-align: center;
+  color: #82848a;
+  position: fixed;
+  left: 25%;
+  bottom: 10px;
 }
 </style>

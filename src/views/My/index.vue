@@ -11,7 +11,7 @@
               <img
                 class="avator"
                 @click="handlePictureCardPreview"
-                :src="user.user_avatar && user.user_avatar.avatar_small_url"
+                :src="user.user_avatar && user.user_avatar.avatar_url"
                 alt=""
               />
 
@@ -101,15 +101,15 @@
             <span class="edit-left">性别</span>
             <span class="edit-right">
               <el-radio-group class="edit-ipt" v-model="user.gender">
-                <el-radio label="male">男</el-radio>
-                <el-radio label="female">女</el-radio>
+                <el-radio disabled label="male">男</el-radio>
+                <el-radio disabled label="female">女</el-radio>
               </el-radio-group>
-              <el-button
+              <!-- <el-button
                 type="primary"
                 icon="el-icon-edit"
                 @click="update('gender')"
                 size="small"
-                >修改</el-button
+                >修改</el-button -->
               >
             </span>
           </div>
@@ -255,9 +255,8 @@ export default {
           data: params,
           method: 'POST',
         })
-
-        if (data.message_no == 100) {
-          messageError('您长时间未操作，请重新登录')
+        if (!data) {
+          // messageError('您长时间未操作，请重新登录')
           // this.clearUserData()
           // this.$router.push('/')
           return

@@ -59,8 +59,7 @@
             <el-avatar
               :size="40"
               :src="
-                (user.user_avatar && user.user_avatar.avatar_small_url) ||
-                  circleUrl
+                (user.user_avatar && user.user_avatar.avatar_url) || circleUrl
               "
             ></el-avatar>
           </a>

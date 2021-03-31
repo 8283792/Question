@@ -99,8 +99,7 @@
       </div>
 
       <comment
-        v-show="user.system_id"
-        :avatar="user.user_avatar && user.user_avatar.avatar_small_url"
+        :avatar="user.user_avatar && user.user_avatar.avatar_url"
         :authorId="user.system_id && Number(user.system_id)"
         :commentList="commentList"
         :commentNum="commentList.length"
@@ -132,6 +131,7 @@ import TinymceEditor from '@/components/tinymce-editor'
 export default {
   data() {
     return {
+      hasConfig: false,
       loading: true,
       doc: {},
       docData: {},
@@ -200,7 +200,10 @@ export default {
         data: params,
         method: 'POST',
       })
-      if (data && data.data) this.replayConfig = data.data
+      if (data && data.data) {
+        this.hasConfig = true
+        this.replayConfig = data.data
+      }
     },
     // 获取主题
     async getTopic(topicId) {
@@ -301,6 +304,8 @@ export default {
       })
       if (data) {
         this.commentList = data.data
+      } else {
+        this.$refs.comment.loading = false
       }
     },
     // 回复
@@ -336,10 +341,11 @@ export default {
     },
     // 楼中楼回复
     async doChidSend(content, bid, pid, idx) {
-      console.log(bid, 'bid')
+      console.log(pid, 'pid')
       const user = this.user
       let params = {
         reply: JSON.stringify({
+          quoted_user: bid,
           system_id: '',
           content: content,
           topic: this.docData.system_id,

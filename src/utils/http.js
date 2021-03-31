@@ -34,13 +34,14 @@ class Http {
         const rescCode = res.data.message_no
         if (this._loading) this._loading.close()
         switch (rescCode) {
-          case 101:
-            messageError('认证信息错误，请重新登录')
+          case '101':
+            messageError('会员认证失败，请重新登录')
             clearUser()
-          case 100:
-            messageError('验证失败，请重试')
             return
-          case 200:
+          case '100':
+            messageError(res.data.message_text)
+            return
+          case '200':
             return res.data
           default:
             return null
